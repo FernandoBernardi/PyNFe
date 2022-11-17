@@ -1,8 +1,9 @@
 # Dependencias basicas
-pyopenssl
-requests
-lxml
-signxml
+pyopenssl==22.1.0
+requests==2.28.1
+lxml==4.7.1
+signxml==2.9.0
+
 
 # Opcional para NFS-e
 #-r requirements-nfse.txt

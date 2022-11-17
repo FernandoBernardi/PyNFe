@@ -1,12 +1,16 @@
 #!/usr/bin/env python
 # *-* encoding: utf8 *-*
-
+import os
 import unittest
 
+import xml.etree.ElementTree as ET
+
+from lxml import etree
 from pynfe.entidades.cliente import Cliente
 from pynfe.entidades.emitente import Emitente
 from pynfe.entidades.notafiscal import NotaFiscal
 from pynfe.entidades.fonte_dados import _fonte_dados
+from pynfe.processamento import ComunicacaoSefaz
 from pynfe.processamento.serializacao import SerializacaoXML
 from pynfe.processamento.assinatura import AssinaturaA1
 from pynfe.processamento.validacao import Validacao
@@ -21,6 +25,8 @@ from pynfe.utils.flags import (
 from decimal import Decimal
 import datetime
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 
 class SerializacaoNFeTestCase(unittest.TestCase):
     """
@@ -30,9 +36,9 @@ class SerializacaoNFeTestCase(unittest.TestCase):
     """
 
     def setUp(self):
-        self.certificado = "./tests/certificado.pfx"
+        self.certificado = os.path.join(BASE_DIR, 'tests', 'certificado.pfx')
         self.senha = bytes('123456', 'utf-8')
-        self.uf = 'pr'
+        self.uf = 'sc'
         self.homologacao = True
 
         self.ns = {'ns': NAMESPACE_NFE}
@@ -41,35 +47,35 @@ class SerializacaoNFeTestCase(unittest.TestCase):
         self.validacao = Validacao()
         self.xsd_procNFe = self.validacao.get_xsd(
             xsd_file=XSD_NFE_PROCESSADA,
-            xsd_folder=XSD_FOLDER_NFE
+            xsd_folder=os.path.join(BASE_DIR, XSD_FOLDER_NFE)
         )
         self.xsd_nfe = self.validacao.get_xsd(
             xsd_file=XSD_NFE,
-            xsd_folder=XSD_FOLDER_NFE
+            xsd_folder=os.path.join(BASE_DIR, XSD_FOLDER_NFE)
         )
 
     def preenche_emitente(self):
         self.emitente = Emitente(
             razao_social='NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL',
-            nome_fantasia='Nome Fantasia da Empresa',
-            cnpj='99999999000199',  # cnpj apenas números
+            nome_fantasia='Digisat Tecnologia LTDA',
+            cnpj='81783912000189',  # cnpj apenas números
             codigo_de_regime_tributario='3',  # 1 para simples nacional ou 3 para normal
-            inscricao_estadual='9999999999',  # numero de IE da empresa
-            inscricao_municipal='12345',
-            cnae_fiscal='9999999',  # cnae apenas números
-            endereco_logradouro='Rua da Paz',
-            endereco_numero='666',
-            endereco_bairro='Sossego',
-            endereco_municipio='Paranavaí',
-            endereco_uf='PR',
-            endereco_cep='87704000',
+            inscricao_estadual='251956326',  # numero de IE da empresa
+            inscricao_municipal='41220',
+            cnae_fiscal='4751201',  # cnae apenas números
+            endereco_logradouro='Rua 29 de Julho',
+            endereco_numero='274',
+            endereco_bairro='Centro',
+            endereco_municipio='Concordia',
+            endereco_uf='SC',
+            endereco_cep='89700041',
             endereco_pais=CODIGO_BRASIL
         )
         return self.emitente
 
     def preenche_destinatario(self):
         self.cliente = Cliente(
-            razao_social='JOSE DA SILVA',
+            razao_social='NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL',
             tipo_documento='CPF',  # CPF ou CNPJ
             email='email@email.com',
             numero_documento='12345678900',  # numero do cpf ou cnpj
@@ -78,19 +84,18 @@ class SerializacaoNFeTestCase(unittest.TestCase):
             endereco_numero='Zero',
             endereco_complemento='Ao lado de lugar nenhum',
             endereco_bairro='Aquele Mesmo',
-            endereco_municipio='Brasilia',
-            endereco_uf='DF',
-            endereco_cep='12345123',
+            endereco_municipio='Concordia',
+            endereco_uf='SC',
+            endereco_cep='89703496',
             endereco_pais=CODIGO_BRASIL,
             endereco_telefone='11912341234',
         )
         return self.cliente
 
     def preenche_notafiscal_produto_cst00(self):
-
         utc = datetime.timezone.utc
-        data_emissao = datetime.datetime(2021, 1, 14, 12, 0, 0, tzinfo=utc)
-        data_saida_entrada = datetime.datetime(2021, 1, 14, 13, 10, 20, tzinfo=utc)
+        data_emissao = datetime.datetime(2022, 11, 16, 12, 0, 0, tzinfo=utc)
+        data_saida_entrada = datetime.datetime(2022, 11, 16, 13, 10, 20, tzinfo=utc)
 
         self.notafiscal = NotaFiscal(
             emitente=self.emitente,
@@ -149,7 +154,7 @@ class SerializacaoNFeTestCase(unittest.TestCase):
             numero_pedido='12345',
             numero_item='1',
             nfci='12345678-AAAA-FFFF-1234-000000000000',
-            informacoes_adicionais='Informações adicionais',
+            informacoes_adicionais='informacoes adicionais',
             ipi_valor_ipi_dev=Decimal('10.00'),
             pdevol=Decimal('1.00'),
         )
@@ -308,6 +313,27 @@ class SerializacaoNFeTestCase(unittest.TestCase):
         self.xml = self.serializa_nfe()
         self.xml_assinado = self.assina_xml()
 
+        con = ComunicacaoSefaz(self.uf, self.certificado, self.senha, self.homologacao)
+        envio = con.autorizacao(modelo='nfe', nota_fiscal=self.xml_assinado)
+
+        if envio[0] == 0:
+            xml_retorno = etree.tostring(envio[1], encoding="unicode").replace('\n', '').replace('ns0:', '').replace(
+                ':ns0', '')
+            print(xml_retorno)
+            ns = {'ns': NAMESPACE_NFE}
+            tree = ET.fromstring(xml_retorno)
+            cstat = tree.find("ns:protNFe/ns:infProt/ns:cStat", namespaces=ns).text
+            chnfe = tree.find("ns:protNFe/ns:infProt/ns:chNFe", namespaces=ns).text
+            nprot = tree.find("ns:protNFe/ns:infProt/ns:nProt", namespaces=ns).text
+            xmotivo = tree.find("ns:protNFe/ns:infProt/ns:xMotivo", namespaces=ns).text
+        else:
+            rejeicao = True
+            tree = ET.fromstring(envio[1].text)
+            print('Erro:')
+            print(envio[1].text)
+            print('Nota:')
+            xml_retorno = etree.tostring(envio[2], encoding="unicode")
+            print(xml_retorno)
         # Teste do conteúdo das tags do XML
         self.total_e_produto_cst00_test()
 
