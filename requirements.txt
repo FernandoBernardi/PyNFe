@@ -1,5 +1,5 @@
 # Dependencias basicas
-pyopenssl==22.1.0
+pyopenssl==17.5.0
 requests==2.28.1
 lxml==4.7.1
 signxml==2.9.0

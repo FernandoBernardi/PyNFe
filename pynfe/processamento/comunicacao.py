@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
-import re
-import ssl
 import datetime
+import re
+
 import requests
+
+from pynfe.entidades.certificado import CertificadoA1
 from pynfe.utils import etree, so_numeros
 from pynfe.utils.flags import (
     NAMESPACE_NFE,
@@ -22,7 +24,6 @@ from pynfe.utils.flags import (
     NAMESPACE_CTE_METODO
 )
 from pynfe.utils.webservices import NFE, NFCE, NFSE, MDFE, CTE
-from pynfe.entidades.certificado import CertificadoA1
 from .assinatura import AssinaturaA1
 
 
@@ -32,17 +33,19 @@ class Comunicacao(object):
     de comunicação com os webservices da NF-e.
     """
 
-    _ambiente = 1   # 1 = Produção, 2 = Homologação
+    _ambiente = 1  # 1 = Produção, 2 = Homologação
     uf = None
     certificado = None
     certificado_senha = None
     url = None
+    commit = True  # True = Para fazer o post, False = Retornar url e xml montados
 
-    def __init__(self, uf, certificado, certificado_senha, homologacao=False):
+    def __init__(self, uf, certificado, certificado_senha, homologacao=False, commit=True):
         self.uf = uf
         self.certificado = certificado
         self.certificado_senha = certificado_senha
         self._ambiente = 2 if homologacao else 1
+        self.commit = commit
 
 
 class ComunicacaoSefaz(Comunicacao):
@@ -74,52 +77,53 @@ class ComunicacaoSefaz(Comunicacao):
         # Monta XML para envio da requisição
         xml = self._construir_xml_soap('NFeAutorizacao4', raiz)
         # Faz request no Servidor da Sefaz
-        retorno = self._post(url, xml)
-
-        # Em caso de sucesso, retorna xml com nfe e protocolo de autorização.
-        # Caso contrário, envia todo o soap de resposta da Sefaz para decisão do usuário.
-        if retorno.status_code == 200:
-            # namespace
-            ns = {'ns': NAMESPACE_NFE}
-            # Procuta status no xml
-            try:
-                prot = etree.fromstring(retorno.text)
-            except ValueError:
-                # em SP retorno.text apresenta erro
-                prot = etree.fromstring(retorno.content)
-            if ind_sinc == 1:
+        if self.commit:
+            retorno = self._post(url, xml)
+            # Em caso de sucesso, retorna xml com nfe e protocolo de autorização.
+            # Caso contrário, envia todo o soap de resposta da Sefaz para decisão do usuário.
+            if retorno.status_code == 200:
+                # namespace
+                ns = {'ns': NAMESPACE_NFE}
+                # Procuta status no xml
                 try:
-                    # Protocolo com envio OK
+                    prot = etree.fromstring(retorno.text)
+                except ValueError:
+                    # em SP retorno.text apresenta erro
+                    prot = etree.fromstring(retorno.content)
+                if ind_sinc == 1:
                     try:
-                        inf_prot = prot[0][0]  # root protNFe
+                        # Protocolo com envio OK
+                        try:
+                            inf_prot = prot[0][0]  # root protNFe
+                        except IndexError:
+                            # Estados como GO vem com a tag header
+                            inf_prot = prot[1][0]
+
+                        lote_status = inf_prot.xpath("ns:retEnviNFe/ns:cStat", namespaces=ns)[0].text
+                        # Lote processado
+                        if lote_status == '104':
+                            prot_nfe = inf_prot.xpath("ns:retEnviNFe/ns:protNFe", namespaces=ns)[0]
+                            status = prot_nfe.xpath('ns:infProt/ns:cStat', namespaces=ns)[0].text
+                            # autorizado usa da NF-e
+                            # retorna xml final (protNFe+NFe)
+                            if status == '100':
+                                raiz = etree.Element('nfeProc', xmlns=NAMESPACE_NFE, versao=VERSAO_PADRAO)
+                                raiz.append(nota_fiscal)
+                                raiz.append(prot_nfe)
+                                return 0, raiz
                     except IndexError:
-                        # Estados como GO vem com a tag header
-                        inf_prot = prot[1][0]
-                        
-                    lote_status = inf_prot.xpath("ns:retEnviNFe/ns:cStat", namespaces=ns)[0].text
-                    # Lote processado
-                    if lote_status == '104':
-                        prot_nfe = inf_prot.xpath("ns:retEnviNFe/ns:protNFe", namespaces=ns)[0]
-                        status = prot_nfe.xpath('ns:infProt/ns:cStat', namespaces=ns)[0].text
-                        # autorizado usa da NF-e 
-                        # retorna xml final (protNFe+NFe)
-                        if status == '100':
-                            raiz = etree.Element('nfeProc', xmlns=NAMESPACE_NFE, versao=VERSAO_PADRAO)
-                            raiz.append(nota_fiscal)
-                            raiz.append(prot_nfe)
-                            return 0, raiz
-                except IndexError:
-                    # Protocolo com algum erro no Envio
-                    return 1, retorno, nota_fiscal
-            else:
-                # Retorna id do protocolo para posterior consulta em caso de sucesso.
-                rec = prot[0][0]
-                status = rec.xpath("ns:retEnviNFe/ns:cStat", namespaces=ns)[0].text
-                # Lote Recebido com Sucesso!
-                if status == '103':
-                    nrec = rec.xpath("ns:retEnviNFe/ns:infRec/ns:nRec", namespaces=ns)[0].text
-                    return 0, nrec, nota_fiscal
-        return 1, retorno, nota_fiscal
+                        # Protocolo com algum erro no Envio
+                        return 1, retorno, nota_fiscal
+                else:
+                    # Retorna id do protocolo para posterior consulta em caso de sucesso.
+                    rec = prot[0][0]
+                    status = rec.xpath("ns:retEnviNFe/ns:cStat", namespaces=ns)[0].text
+                    # Lote Recebido com Sucesso!
+                    if status == '103':
+                        nrec = rec.xpath("ns:retEnviNFe/ns:infRec/ns:nRec", namespaces=ns)[0].text
+                        return 0, nrec, nota_fiscal
+            return 1, retorno, nota_fiscal
+        return url, xml
 
     def consulta_recibo(self, modelo, numero, contingencia=False):
         """
@@ -144,7 +148,9 @@ class ComunicacaoSefaz(Comunicacao):
 
         # Monta XML para envio da requisição
         xml = self._construir_xml_soap('NFeRetAutorizacao4', raiz)
-        return self._post(url, xml)
+        if self.commit:
+            return self._post(url, xml)
+        return url, xml
 
     def consulta_nota(self, modelo, chave, contingencia=False):
         """
@@ -164,7 +170,9 @@ class ComunicacaoSefaz(Comunicacao):
         etree.SubElement(raiz, 'chNFe').text = chave
         # Monta XML para envio da requisição
         xml = self._construir_xml_soap('NFeConsultaProtocolo4', raiz)
-        return self._post(url, xml)
+        if self.commit:
+            return self._post(url, xml)
+        return url, xml
 
     def consulta_distribuicao(self, cnpj=None, cpf=None, chave=None, nsu=0, consulta_nsu_especifico=False):
         """
@@ -217,7 +225,9 @@ class ComunicacaoSefaz(Comunicacao):
         # Monta XML para envio da requisição
         xml = self._construir_xml_soap('NFeDistribuicaoDFe', raiz)
 
-        return self._post(url, xml)
+        if self.commit:
+            return self._post(url, xml)
+        return url, xml
 
     def consulta_cadastro(self, modelo, cnpj):
         """
@@ -251,7 +261,9 @@ class ComunicacaoSefaz(Comunicacao):
         # Monta XML para envio da requisição
         xml = self._construir_xml_soap('CadConsultaCadastro4', raiz)
         # Chama método que efetua a requisição POST no servidor SOAP
-        return self._post(url, xml)
+        if self.commit:
+            return self._post(url, xml)
+        return url, xml
 
     def evento(self, modelo, evento, id_lote=1):
         """
@@ -277,7 +289,9 @@ class ComunicacaoSefaz(Comunicacao):
         etree.SubElement(raiz, 'idLote').text = str(id_lote)  # numero autoincremental gerado pelo sistema
         raiz.append(evento)
         xml = self._construir_xml_soap('NFeRecepcaoEvento4', raiz)
-        return self._post(url, xml)
+        if self.commit:
+            return self._post(url, xml)
+        return url, xml
 
     def status_servico(self, modelo):
         """
@@ -292,7 +306,9 @@ class ComunicacaoSefaz(Comunicacao):
         etree.SubElement(raiz, 'cUF').text = CODIGOS_ESTADOS[self.uf.upper()]
         etree.SubElement(raiz, 'xServ').text = 'STATUS'
         xml = self._construir_xml_soap('NFeStatusServico4', raiz)
-        return self._post(url, xml)
+        if self.commit:
+            return self._post(url, xml)
+        return url, xml
 
     def inutilizacao(self, modelo, cnpj, numero_inicial, numero_final, justificativa='', ano=None, serie='1'):
         """
@@ -356,7 +372,9 @@ class ComunicacaoSefaz(Comunicacao):
         # Monta XML para envio da requisição
         xml = self._construir_xml_soap('NFeInutilizacao4', xml)
         # Faz request no Servidor da Sefaz e retorna resposta
-        return self._post(url, xml)
+        if self.commit:
+            return self._post(url, xml)
+        return url, xml
 
     def _get_url_an(self, consulta):
         # producao
@@ -376,7 +394,8 @@ class ComunicacaoSefaz(Comunicacao):
         """ Retorna a url para comunicação com o webservice """
         if contingencia:
             contingencia_svrs = ['AM', 'BA', 'CE', 'GO', 'MA', 'MS', 'MT', 'PE', 'PR']
-            contingencia_svan = ['AC', 'AL', 'AP', 'DF', 'ES', 'MG', 'PA', 'PB', 'PI', 'RJ', 'RN', 'RO', 'RR', 'RS', 'SC', 'SE', 'SP', 'TO']
+            contingencia_svan = ['AC', 'AL', 'AP', 'DF', 'ES', 'MG', 'PA', 'PB', 'PI', 'RJ', 'RN', 'RO', 'RR', 'RS',
+                                 'SC', 'SE', 'SP', 'TO']
 
             if self.uf.upper() in contingencia_svrs:
                 if self._ambiente == 1:
@@ -467,17 +486,17 @@ class ComunicacaoSefaz(Comunicacao):
     def _construir_xml_soap(self, metodo, dados, cabecalho=False):
         """Mota o XML para o envio via SOAP"""
         raiz = etree.Element('{%s}Envelope' % NAMESPACE_SOAP, nsmap={
-          'xsi': NAMESPACE_XSI, 'xsd': NAMESPACE_XSD,'soap': NAMESPACE_SOAP})
+            'xsi': NAMESPACE_XSI, 'xsd': NAMESPACE_XSD, 'soap': NAMESPACE_SOAP})
         body = etree.SubElement(raiz, '{%s}Body' % NAMESPACE_SOAP)
         ## distribuição tem um corpo de xml diferente
         if metodo == 'NFeDistribuicaoDFe':
-            x = etree.SubElement(body, 'nfeDistDFeInteresse', xmlns=NAMESPACE_METODO+metodo)
+            x = etree.SubElement(body, 'nfeDistDFeInteresse', xmlns=NAMESPACE_METODO + metodo)
             a = etree.SubElement(x, 'nfeDadosMsg')
         elif metodo == 'CadConsultaCadastro4' and self.uf.upper() == 'MT':
-            x = etree.SubElement(body, 'consultaCadastro', xmlns=NAMESPACE_METODO+metodo)
+            x = etree.SubElement(body, 'consultaCadastro', xmlns=NAMESPACE_METODO + metodo)
             a = etree.SubElement(x, 'nfeDadosMsg')
         else:
-            a = etree.SubElement(body, 'nfeDadosMsg', xmlns=NAMESPACE_METODO+metodo)
+            a = etree.SubElement(body, 'nfeDadosMsg', xmlns=NAMESPACE_METODO + metodo)
         a.append(dados)
         return raiz
 
@@ -634,11 +653,12 @@ class ComunicacaoNfse(Comunicacao):
         # cabecalho = '<ns2:cabecalho versao="3" xmlns:ns2="http://www.ginfes.com.br/cabecalho_v03.xsd"
         # xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><versaoDados>3</versaoDados></ns2:cabecalho>'
         # cabecalho
-        raiz = etree.Element('{%s}cabecalho'%self._namespace, nsmap={'ns2':self._namespace, 'xsi':NAMESPACE_XSI}, versao=self._versao)
+        raiz = etree.Element('{%s}cabecalho' % self._namespace, nsmap={'ns2': self._namespace, 'xsi': NAMESPACE_XSI},
+                             versao=self._versao)
         etree.SubElement(raiz, 'versaoDados').text = self._versao
 
         if retorna_string:
-            cabecalho = etree.tostring(raiz, encoding='unicode', pretty_print=False).replace('\n','')
+            cabecalho = etree.tostring(raiz, encoding='unicode', pretty_print=False).replace('\n', '')
             cabecalho = xml_declaration + cabecalho
             return cabecalho
         else:
@@ -713,7 +733,7 @@ class ComunicacaoNfse(Comunicacao):
             certificadoA1 = CertificadoA1(self.certificado)
             chave, cert = certificadoA1.separar_arquivo(self.certificado_senha, caminho=True)
 
-            cliente = Client(url, transport = HttpAuthenticated(key=chave, cert=cert, endereco=url))
+            cliente = Client(url, transport=HttpAuthenticated(key=chave, cert=cert, endereco=url))
 
             # gerar nfse
             if metodo == 'gerar':
@@ -743,7 +763,6 @@ class ComunicacaoNfse(Comunicacao):
 
 
 class ComunicacaoMDFe(Comunicacao):
-
     MDFE_SITUACAO_JA_ENVIADO = ('100', '101', '132')
 
     _modelo = MODELO_MDFE
@@ -789,7 +808,7 @@ class ComunicacaoMDFe(Comunicacao):
         # Monta XML do corpo da requisição
         raiz = etree.Element('enviMDFe', xmlns=NAMESPACE_MDFE, versao=VERSAO_MDFE)
         etree.SubElement(raiz, 'idLote').text = str(id_lote)  # numero autoincremental gerado pelo sistema
-        #etree.SubElement(raiz, 'indSinc').text = str(ind_sinc)  # 0 para assincrono, 1 para sincrono
+        # etree.SubElement(raiz, 'indSinc').text = str(ind_sinc)  # 0 para assincrono, 1 para sincrono
         raiz.append(manifesto)
 
         # Monta XML para envio da requisição
@@ -927,7 +946,7 @@ class ComunicacaoMDFe(Comunicacao):
         a = etree.SubElement(
             body,
             self._envio_mensagem,
-            xmlns=self._namespace_metodo+metodo
+            xmlns=self._namespace_metodo + metodo
         )
 
         # if metodo == 'MDFeRecepcaoSinc':
@@ -1066,7 +1085,7 @@ class ComunicacaoCTe(Comunicacao):
         if chave:
             consChCTe = etree.SubElement(raiz, 'consChCTe')
             etree.SubElement(consChCTe, 'chCTe').text = chave
-        #Monta XML para envio da requisição
+        # Monta XML para envio da requisição
         xml = self._construir_xml_soap('CTeDistribuicaoDFe', raiz)
         return self._post(url, xml)
 
@@ -1155,10 +1174,10 @@ class ComunicacaoCTe(Comunicacao):
         body = etree.SubElement(raiz, '{%s}Body' % NAMESPACE_SOAP)
         # distribuição tem um corpo de xml diferente
         if metodo == 'CTeDistribuicaoDFe':
-            x = etree.SubElement(body, 'cteDistDFeInteresse', xmlns=NAMESPACE_CTE_METODO+metodo)
+            x = etree.SubElement(body, 'cteDistDFeInteresse', xmlns=NAMESPACE_CTE_METODO + metodo)
             a = etree.SubElement(x, 'cteDadosMsg')
         else:
-            a = etree.SubElement(body, 'cteDadosMsg', xmlns=NAMESPACE_CTE_METODO+metodo)
+            a = etree.SubElement(body, 'cteDadosMsg', xmlns=NAMESPACE_CTE_METODO + metodo)
         a.append(dados)
         return raiz
 
