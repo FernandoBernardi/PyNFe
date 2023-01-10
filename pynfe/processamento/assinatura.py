@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from pynfe.utils import etree, remover_acentos
 from pynfe.utils.flags import NAMESPACE_SIG
-from signxml import XMLSigner, SignatureConstructionMethod
+from signxml import XMLSigner, SignatureConstructionMethod, SignatureMethod, DigestAlgorithm, CanonicalizationMethod
 from pynfe.entidades import CertificadoA1
 
 
@@ -37,9 +37,9 @@ class AssinaturaA1(Assinatura):
 
         signer = XMLSigner(
             method=SignatureConstructionMethod.enveloped,
-            signature_algorithm="rsa-sha1",
-            digest_algorithm='sha1',
-            c14n_algorithm='http://www.w3.org/TR/2001/REC-xml-c14n-20010315')
+            signature_algorithm=SignatureMethod.RSA_SHA1,
+            digest_algorithm=DigestAlgorithm.SHA1,
+            c14n_algorithm=CanonicalizationMethod.CANONICAL_XML_1_0)
 
         ns = {None: signer.namespaces['ds']}
         signer.namespaces = ns
