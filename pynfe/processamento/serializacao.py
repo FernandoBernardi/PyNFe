@@ -634,7 +634,7 @@ class SerializacaoXML(Serializacao):
             raise NotImplementedError
 
     def _serializar_imposto_ipi(self, produto_servico, tag_raiz='imposto', retorna_string=True):
-        ipint_lista = ('01','02','03','04','05','51','52','53','54','55')
+        ipint_lista = ('01','02','03','04','05','50','51','52','53','54','55')
         if produto_servico.ipi_codigo_enquadramento in ipint_lista:
             ipi = etree.SubElement(tag_raiz, 'IPI')
             # Preenchimento conforme Atos Normativos editados pela Receita Federal (Observação 2)
@@ -644,7 +644,7 @@ class SerializacaoXML(Serializacao):
 
             ipint = etree.SubElement(ipi, 'IPINT')
             # 01=Entrada tributada com alíquota zero 02=Entrada isenta 03=Entrada não-tributada 04=Entrada imune 05=Entrada com suspensão
-            # 51=Saída tributada com alíquota zero 52=Saída isenta 53=Saída não-tributada 54=Saída imune 55=Saída com suspensão
+            # 50=Saída tributada 51=Saída tributada com alíquota zero 52=Saída isenta 53=Saída não-tributada 54=Saída imune 55=Saída com suspensão
             etree.SubElement(ipint, 'CST').text = produto_servico.ipi_codigo_enquadramento
 
     def _serializar_imposto_pis(self, produto_servico, modelo, tag_raiz='imposto', retorna_string=True):
