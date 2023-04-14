@@ -645,9 +645,9 @@ class SerializacaoXML(Serializacao):
 
             ipitrib = etree.SubElement(ipi, 'IPITrib')
             etree.SubElement(ipitrib, 'CST').text = produto_servico.ipi_codigo_enquadramento
-            etree.SubElement(ipitrib, 'vBC').text = produto_servico.ipi_valor_base_calculo
-            etree.SubElement(ipitrib, 'pIPI').text = produto_servico.ipi_aliquota
-            etree.SubElement(ipitrib, 'vIPI').text = produto_servico.ipi_valor_ipi
+            etree.SubElement(ipitrib, 'vBC').text = '{:.2f}'.format(produto_servico.ipi_valor_base_calculo or 0)
+            etree.SubElement(ipitrib, 'pIPI').text = '{:.2f}'.format(produto_servico.ipi_aliquota or 0)
+            etree.SubElement(ipitrib, 'vIPI').text = '{:.2f}'.format(produto_servico.ipi_valor_ipi or 0)
         if produto_servico.ipi_codigo_enquadramento in ipint_lista:
             ipi = etree.SubElement(tag_raiz, 'IPI')
             # Preenchimento conforme Atos Normativos editados pela Receita Federal (Observação 2)
