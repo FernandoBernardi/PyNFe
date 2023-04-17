@@ -73,6 +73,21 @@ class NotaFiscal(Entidade):
     """
     tipo_pagamento = int()
 
+    # tpIntegra 1 = TEF 2 = POS
+    tp_integra = str()
+
+    # CNPJ - Administradora do Cartão
+    cnpj_adm_cartao = str()
+
+    # Bandeira - Administradora do Cartão
+    bandeira_cartao = str()
+
+    # Codigo Autorização - Administradora do Cartão
+    cod_autorizacao = str()
+
+    # Valor do troco
+    valor_troco = Decimal()
+
     # - Forma de emissao (obrigatorio - seleciona de lista) - NF_FORMAS_EMISSAO
     forma_emissao = str()
 

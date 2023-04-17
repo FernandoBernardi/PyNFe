@@ -1014,12 +1014,12 @@ class SerializacaoXML(Serializacao):
                     1=Pagamento integrado com o sistema de automação da empresa (Ex.: equipamento TEF, Comércio Eletrônico);
                     2= Pagamento não integrado com o sistema de automação da empresa (Ex.: equipamento POS);
                 """
-                etree.SubElement(cartao, 'tpIntegra').text = '2'
-                #etree.SubElement(cartao, 'CNPJ').text = '' # Informar o CNPJ da Credenciadora de cartão de crédito / débito
-                #etree.SubElement(cartao, 'tBand').text = '' # 01=Visa 02=Mastercard 03=American Express 04=Sorocred 05=Diners Club 06=Elo 07=Hipercard 08=Aura 09=Caba 99=Outros
-                #etree.SubElement(cartao, 'cAut').text = '' # Identifica o número da autorização da transação da operação com cartão de crédito e/ou débito
+                etree.SubElement(cartao, 'tpIntegra').text = nota_fiscal.tp_integra
+                etree.SubElement(cartao, 'CNPJ').text = nota_fiscal.cnpj_adm_cartao  # Informar o CNPJ da Credenciadora de cartão de crédito / débito
+                etree.SubElement(cartao, 'tBand').text = nota_fiscal.bandeira_cartao # 01=Visa 02=Mastercard 03=American Express 04=Sorocred 05=Diners Club 06=Elo 07=Hipercard 08=Aura 09=Caba 99=Outros
+                etree.SubElement(cartao, 'cAut').text = nota_fiscal.cod_autorizacao  # Identifica o número da autorização da transação da operação com cartão de crédito e/ou débito
             # troco
-            # etree.SubElement(pag, 'vTroco').text = str('')
+            etree.SubElement(pag, 'vTroco').text = str(nota_fiscal.valor_troco)
 
         # Informações adicionais
         if nota_fiscal.informacoes_adicionais_interesse_fisco or nota_fiscal.informacoes_complementares_interesse_contribuinte:
