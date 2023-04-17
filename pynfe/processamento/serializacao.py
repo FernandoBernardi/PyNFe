@@ -1019,7 +1019,8 @@ class SerializacaoXML(Serializacao):
                 etree.SubElement(cartao, 'tBand').text = nota_fiscal.bandeira_cartao # 01=Visa 02=Mastercard 03=American Express 04=Sorocred 05=Diners Club 06=Elo 07=Hipercard 08=Aura 09=Caba 99=Outros
                 etree.SubElement(cartao, 'cAut').text = nota_fiscal.cod_autorizacao  # Identifica o número da autorização da transação da operação com cartão de crédito e/ou débito
             # troco
-            etree.SubElement(pag, 'vTroco').text = str(nota_fiscal.valor_troco)
+            if nota_fiscal.valor_troco > 0:
+                etree.SubElement(pag, 'vTroco').text = str(nota_fiscal.valor_troco)
 
         # Informações adicionais
         if nota_fiscal.informacoes_adicionais_interesse_fisco or nota_fiscal.informacoes_complementares_interesse_contribuinte:
