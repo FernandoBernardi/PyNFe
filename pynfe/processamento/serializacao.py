@@ -661,7 +661,7 @@ class SerializacaoXML(Serializacao):
             etree.SubElement(ipint, 'CST').text = produto_servico.ipi_codigo_enquadramento
 
     def _serializar_imposto_pis(self, produto_servico, modelo, tag_raiz='imposto', retorna_string=True):
-        if modelo == 55:  # apenas nfe
+        if modelo in [55, 65]:
             pisnt = ('04','05','06','07','08','09')
             pis = etree.SubElement(tag_raiz, 'PIS')
             if produto_servico.pis_modalidade in pisnt:
@@ -699,7 +699,7 @@ class SerializacaoXML(Serializacao):
                 # etree.SubElement(pis_item, 'vPIS').text = produto_servico.pis_valor_base_calculo
 
     def _serializar_imposto_cofins(self, produto_servico, modelo, tag_raiz='imposto', retorna_string=True):
-        if modelo == 55:  # apenas nfe
+        if modelo in [55, 65]:
             cofinsnt = ('04','05','06','07','08','09')
             cofins = etree.SubElement(tag_raiz, 'COFINS')
             if produto_servico.cofins_modalidade in cofinsnt:
