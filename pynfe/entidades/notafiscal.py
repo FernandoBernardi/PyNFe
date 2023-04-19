@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 import random
+from decimal import Decimal
 
-from .base import Entidade
 from pynfe import get_version
-from pynfe.utils.flags import NF_STATUS, CODIGO_BRASIL, CODIGOS_ESTADOS
-
 # from pynfe.utils import so_numeros, memoize
 from pynfe.utils import so_numeros
+from pynfe.utils.flags import NF_STATUS, CODIGO_BRASIL, CODIGOS_ESTADOS
+from .base import Entidade
 
-from decimal import Decimal
 
 class NotaFiscal(Entidade):
     status = NF_STATUS[0]
@@ -54,36 +53,7 @@ class NotaFiscal(Entidade):
     # Removido na NF-e 4.00
     # forma_pagamento = int()
 
-    # - Tipo de pagamento
-    """ 
-    Obrigatório o preenchimento do Grupo Informações de Pagamento para NF-e e NFC-e. 
-    Para as notas com finalidade de Ajuste ou Devolução o campo Forma de Pagamento deve ser preenchido com 90=Sem Pagamento.
-    01=Dinheiro
-    02=Cheque
-    03=Cartão de Crédito
-    04=Cartão de Débito
-    05=Crédito Loja
-    10=Vale Alimentação
-    11=Vale Refeição
-    12=Vale Presente
-    13=Vale Combustível
-    14=Duplicata Mercantil
-    90= Sem pagamento
-    99=Outros
-    """
-    tipo_pagamento = int()
-
-    # tpIntegra 1 = TEF 2 = POS
-    tp_integra = str()
-
-    # CNPJ - Administradora do Cartão
-    cnpj_adm_cartao = str()
-
-    # Bandeira - Administradora do Cartão
-    bandeira_cartao = str()
-
-    # Codigo Autorização - Administradora do Cartão
-    cod_autorizacao = str()
+    pagamentos = None
 
     # Valor do troco
     valor_troco = Decimal()
@@ -272,10 +242,10 @@ class NotaFiscal(Entidade):
     # - Valor total do ICMS relativo Fundo de Combate à Pobreza (FCP) da UF de destino 
     totais_fcp_destino = Decimal()
 
-     # - Valor Total do FCP (Fundo de Combate à Pobreza) retido por substituição tributária
+    # - Valor Total do FCP (Fundo de Combate à Pobreza) retido por substituição tributária
     totais_fcp_st = Decimal()
 
-     # - Valor Total do FCP retido anteriormente por Substituição Tributária
+    # - Valor Total do FCP retido anteriormente por Substituição Tributária
     totais_fcp_st_ret = Decimal()
 
     # - Valor total do ICMS Interestadual para a UF de destino 
@@ -377,6 +347,7 @@ class NotaFiscal(Entidade):
         self.autorizados_baixar_xml = []
         self.notas_fiscais_referenciadas = []
         self.produtos_e_servicos = []
+        self.pagamentos = []
         self.transporte_volumes = []
         self.duplicatas = []
         self.observacoes_contribuinte = []
@@ -426,23 +397,28 @@ class NotaFiscal(Entidade):
         self.totais_icms_inter_destino += obj.icms_inter_destino_valor
         self.totais_icms_inter_remetente += obj.icms_inter_remetente_valor
         ## TODO calcular impostos aproximados
-        #self.totais_tributos_aproximado += obj.tributos
+        # self.totais_tributos_aproximado += obj.tributos
 
         self.totais_icms_total_nota += (
-            obj.valor_total_bruto
-            + obj.icms_st_valor
-            + obj.fcp_st_valor
-            + obj.total_frete
-            + obj.total_seguro
-            + obj.outras_despesas_acessorias
-            + obj.imposto_importacao_valor
-            + obj.ipi_valor_ipi
-            + obj.ipi_valor_ipi_dev
-            - obj.desconto
-            - obj.icms_desonerado
+                obj.valor_total_bruto
+                + obj.icms_st_valor
+                + obj.fcp_st_valor
+                + obj.total_frete
+                + obj.total_seguro
+                + obj.outras_despesas_acessorias
+                + obj.imposto_importacao_valor
+                + obj.ipi_valor_ipi
+                + obj.ipi_valor_ipi_dev
+                - obj.desconto
+                - obj.icms_desonerado
         )
 
         return obj
+
+    def adicionar_pagamento(self, **kwargs):
+        u"""Adiciona uma instancia de Pagamento"""
+        obj = NotaFiscalPagamento(**kwargs)
+        self.pagamentos.append(obj)
 
     def adicionar_transporte_volume(self, **kwargs):
         u"""Adiciona uma instancia de Volume de Transporte"""
@@ -504,29 +480,30 @@ class NotaFiscal(Entidade):
     def identificador_unico(self):
         # Monta 'Id' da tag raiz <infNFe>
         # Ex.: NFe35080599999090910270550010000000011518005123
-        key = "%(uf)s%(ano)s%(mes)s%(cnpj)s%(mod)s%(serie)s%(nNF)s%(tpEmis)s%(cNF)s"%{
-                'uf': CODIGOS_ESTADOS[self.uf],
-                'ano': self.data_emissao.strftime('%y'),
-                'mes': self.data_emissao.strftime('%m'),
-                'cnpj': so_numeros(self.emitente.cnpj).zfill(14),
-                'mod': self.modelo,
-                'serie': str(self.serie).zfill(3),
-                'nNF': str(self.numero_nf).zfill(9),
-                'tpEmis': str(self.forma_emissao),
-                'cNF': self._codigo_numerico_aleatorio(),
-                }
-        return "NFe%(uf)s%(ano)s%(mes)s%(cnpj)s%(mod)s%(serie)s%(nNF)s%(tpEmis)s%(cNF)s%(cDV)s"%{
-                'uf': CODIGOS_ESTADOS[self.uf],
-                'ano': self.data_emissao.strftime('%y'),
-                'mes': self.data_emissao.strftime('%m'),
-                'cnpj': so_numeros(self.emitente.cnpj).zfill(14),
-                'mod': self.modelo,
-                'serie': str(self.serie).zfill(3),
-                'nNF': str(self.numero_nf).zfill(9),
-                'tpEmis': str(self.forma_emissao),
-                'cNF': str(self.codigo_numerico_aleatorio),
-                'cDV': self._dv_codigo_numerico(key),
-                }
+        key = "%(uf)s%(ano)s%(mes)s%(cnpj)s%(mod)s%(serie)s%(nNF)s%(tpEmis)s%(cNF)s" % {
+            'uf': CODIGOS_ESTADOS[self.uf],
+            'ano': self.data_emissao.strftime('%y'),
+            'mes': self.data_emissao.strftime('%m'),
+            'cnpj': so_numeros(self.emitente.cnpj).zfill(14),
+            'mod': self.modelo,
+            'serie': str(self.serie).zfill(3),
+            'nNF': str(self.numero_nf).zfill(9),
+            'tpEmis': str(self.forma_emissao),
+            'cNF': self._codigo_numerico_aleatorio(),
+        }
+        return "NFe%(uf)s%(ano)s%(mes)s%(cnpj)s%(mod)s%(serie)s%(nNF)s%(tpEmis)s%(cNF)s%(cDV)s" % {
+            'uf': CODIGOS_ESTADOS[self.uf],
+            'ano': self.data_emissao.strftime('%y'),
+            'mes': self.data_emissao.strftime('%m'),
+            'cnpj': so_numeros(self.emitente.cnpj).zfill(14),
+            'mod': self.modelo,
+            'serie': str(self.serie).zfill(3),
+            'nNF': str(self.numero_nf).zfill(9),
+            'tpEmis': str(self.forma_emissao),
+            'cNF': str(self.codigo_numerico_aleatorio),
+            'cDV': self._dv_codigo_numerico(key),
+        }
+
 
 class NotaFiscalReferenciada(Entidade):
     # - Tipo (seleciona de lista) - NF_REFERENCIADA_TIPOS
@@ -557,6 +534,7 @@ class NotaFiscalReferenciada(Entidade):
 
     #   - Modelo
     modelo = str()
+
 
 class NotaFiscalProduto(Entidade):
     # - Dados
@@ -912,6 +890,25 @@ class NotaFiscalProduto(Entidade):
         u"""Adiciona uma instancia de Declaracao de Importacao"""
         self.declaracoes_importacao.append(NotaFiscalDeclaracaoImportacao(**kwargs))
 
+
+class NotaFiscalPagamento(Entidade):
+    # - Dados
+    # - Tipo de pagamento
+    tipo_pagamento = int()
+
+    # tpIntegra 1 = TEF 2 = POS
+    tp_integra = str()
+
+    # CNPJ - Administradora do Cartão
+    cnpj_adm_cartao = str()
+
+    # Bandeira - Administradora do Cartão
+    bandeira_cartao = str()
+
+    # Codigo Autorização - Administradora do Cartão
+    cod_autorizacao = str()
+
+
 class NotaFiscalDeclaracaoImportacao(Entidade):
     #  - Numero DI/DSI/DA
     numero_di_dsi_da = str()
@@ -944,6 +941,7 @@ class NotaFiscalDeclaracaoImportacao(Entidade):
         u"""Adiciona uma instancia de Adicao de Declaracao de Importacao"""
         self.adicoes.append(NotaFiscalDeclaracaoImportacaoAdicao(**kwargs))
 
+
 class NotaFiscalDeclaracaoImportacaoAdicao(Entidade):
     #   - Numero
     numero = str()
@@ -953,6 +951,7 @@ class NotaFiscalDeclaracaoImportacaoAdicao(Entidade):
 
     #   - Codigo fabricante
     codigo_fabricante = str()
+
 
 class NotaFiscalTransporteVolume(Entidade):
     #  - Quantidade
@@ -985,9 +984,11 @@ class NotaFiscalTransporteVolume(Entidade):
         u"""Adiciona uma instancia de Lacre de Volume de Transporte"""
         self.lacres.append(NotaFiscalTransporteVolumeLacre(**kwargs))
 
+
 class NotaFiscalTransporteVolumeLacre(Entidade):
     #   - Numero de lacres
     numero_lacre = str()
+
 
 class NotaFiscalCobrancaDuplicata(Entidade):
     #  - Numero
@@ -999,12 +1000,14 @@ class NotaFiscalCobrancaDuplicata(Entidade):
     #  - Valor
     valor = Decimal()
 
+
 class NotaFiscalObservacaoContribuinte(Entidade):
     #  - Nome do campo
     nome_campo = str()
 
     #  - Observacao
     observacao = str()
+
 
 class NotaFiscalProcessoReferenciado(Entidade):
     #  - Identificador do processo
@@ -1017,6 +1020,7 @@ class NotaFiscalProcessoReferenciado(Entidade):
     #   - Secex/RFB
     #   - Outros
     origem = str()
+
 
 class NotaFiscalEntregaRetirada(Entidade):
     # - Tipo de Documento (obrigatorio) - default CNPJ
@@ -1056,8 +1060,8 @@ class NotaFiscalEntregaRetirada(Entidade):
     #  - Telefone
     endereco_telefone = str()
 
+
 class NotaFiscalServico(Entidade):
-    
     # id do rps
     identificador = str()
     # tag competencia
@@ -1069,9 +1073,9 @@ class NotaFiscalServico(Entidade):
     # Cliente para quem a NFS-e será emitida
     cliente = None
     # Optante Simples Nacional
-    simples = int()     # 1-Sim; 2-Não
+    simples = int()  # 1-Sim; 2-Não
     # Incentivo Fiscal
-    incentivo = int()   # 1-Sim; 2-Não
+    incentivo = int()  # 1-Sim; 2-Não
     # Serie
     serie = str()
     # Tipo
@@ -1082,11 +1086,11 @@ class NotaFiscalServico(Entidade):
     regime_especial = int()
 
     def __init__(self, *args, **kwargs):
-
         super(NotaFiscalServico, self).__init__(*args, **kwargs)
 
     def __str__(self):
         return ' '.join([str(self.identificador)])
+
 
 class NotaFiscalResponsavelTecnico(Entidade):
     # NT 2018/003
@@ -1095,6 +1099,7 @@ class NotaFiscalResponsavelTecnico(Entidade):
     email = str()
     fone = str()
     csrt = str()
+
 
 class AutorizadosBaixarXML(Entidade):
     CPFCNPJ = str()
