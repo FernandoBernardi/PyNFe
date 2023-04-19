@@ -896,6 +896,9 @@ class NotaFiscalPagamento(Entidade):
     # - Tipo de pagamento
     tipo_pagamento = int()
 
+    # vPag Valor do pagamento
+    valor_pagamento = Decimal()
+
     # tpIntegra 1 = TEF 2 = POS
     tp_integra = str()
 

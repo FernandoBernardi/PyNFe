@@ -1093,7 +1093,7 @@ class SerializacaoXML(Serializacao):
             for pgto in nota_fiscal.pagamentos:
                 detpag = etree.SubElement(pag, 'detPag')
                 etree.SubElement(detpag, 'tPag').text = str(pgto.tipo_pagamento).zfill(2)
-                etree.SubElement(detpag, 'vPag').text = '{:.2f}'.format(pgto.totais_icms_total_nota)
+                etree.SubElement(detpag, 'vPag').text = '{:.2f}'.format(pgto.valor_pagamento)
                 if pgto.tipo_pagamento == 3 or pgto.tipo_pagamento == 4:
                     cartao = etree.SubElement(detpag, 'card')
                     """ Tipo de Integração do processo de pagamento com o sistema de automação da empresa:
