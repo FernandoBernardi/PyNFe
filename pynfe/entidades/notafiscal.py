@@ -659,6 +659,9 @@ class NotaFiscalProduto(Entidade):
     #    - Valor do ICMS
     icms_valor = Decimal()
 
+    #    - Valor Crédito do ICMS
+    icms_credito = Decimal()
+
     #    - ICMS Desonerado
     icms_desonerado = Decimal()
 
