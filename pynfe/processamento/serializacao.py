@@ -30,7 +30,7 @@ class Serializacao(object):
     _ambiente = 1  # 1 = Produção, 2 = Homologação
     _contingencia = None  # Justificativa da entrada em contingência (min 20, max 256 caracteres)
     _so_cpf = False  # Destinatário com apenas o cpf do cliente
-    _nome_aplicacao = 'PyNFe'
+    _nome_aplicacao = 'DigisatWeb'
 
     def __new__(cls, *args, **kwargs):
         if cls == Serializacao:
@@ -1101,7 +1101,8 @@ class SerializacaoXML(Serializacao):
                         2= Pagamento não integrado com o sistema de automação da empresa (Ex.: equipamento POS);
                     """
                     etree.SubElement(cartao, 'tpIntegra').text = pgto.tp_integra
-                    etree.SubElement(cartao, 'CNPJ').text = pgto.cnpj_adm_cartao
+                    if pgto.cnpj_adm_cartao:
+                        etree.SubElement(cartao, 'CNPJ').text = pgto.cnpj_adm_cartao
                     etree.SubElement(cartao, 'tBand').text = pgto.bandeira_cartao
                     etree.SubElement(cartao, 'cAut').text = pgto.cod_autorizacao
                     # troco
