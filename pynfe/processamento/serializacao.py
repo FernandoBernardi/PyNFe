@@ -259,9 +259,9 @@ class SerializacaoXML(Serializacao):
         # etree.SubElement(prod, 'CEST').text = produto_service.cest
         if produto_servico.cbenef:
             etree.SubElement(prod, 'cBenef').text = produto_servico.cbenef
-        etree.SubElement(prod, 'CFOP').text = produto_servico.cfop
         if produto_servico.cest:
-           etree.SubElement(prod, 'CEST').text = produto_servico.cest
+            etree.SubElement(prod, 'CEST').text = produto_servico.cest
+        etree.SubElement(prod, 'CFOP').text = produto_servico.cfop
         etree.SubElement(prod, 'uCom').text = produto_servico.unidade_comercial
         etree.SubElement(prod, 'qCom').text = str(produto_servico.quantidade_comercial or 0)
         etree.SubElement(prod, 'vUnCom').text = str('{:.10f}').format(produto_servico.valor_unitario_comercial or 0)
