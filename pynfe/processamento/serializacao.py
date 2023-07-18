@@ -1103,8 +1103,10 @@ class SerializacaoXML(Serializacao):
                     etree.SubElement(cartao, 'tpIntegra').text = pgto.tp_integra
                     if pgto.cnpj_adm_cartao:
                         etree.SubElement(cartao, 'CNPJ').text = pgto.cnpj_adm_cartao
-                    etree.SubElement(cartao, 'tBand').text = pgto.bandeira_cartao
-                    etree.SubElement(cartao, 'cAut').text = pgto.cod_autorizacao
+                    if pgto.bandeira_cartao:
+                        etree.SubElement(cartao, 'tBand').text = pgto.bandeira_cartao
+                    if pgto.cod_autorizacao:
+                        etree.SubElement(cartao, 'cAut').text = pgto.cod_autorizacao
                     # troco
             if nota_fiscal.valor_troco > 0:
                 etree.SubElement(pag, 'vTroco').text = str(nota_fiscal.valor_troco)
