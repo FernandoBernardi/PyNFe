@@ -396,24 +396,6 @@ class NotaFiscal(Entidade):
         self.totais_fcp_st_ret += obj.fcp_st_ret_valor
         self.totais_icms_inter_destino += obj.icms_inter_destino_valor
         self.totais_icms_inter_remetente += obj.icms_inter_remetente_valor
-        # self.totais_tributos_aproximado += obj.tributos
-        if obj.totais_icms_total_nota > 0:
-            self.totais_icms_total_nota = obj.totais_icms_total_nota
-        else:
-            self.totais_icms_total_nota += (
-                    obj.valor_total_bruto
-                    + obj.icms_st_valor
-                    + obj.fcp_st_valor
-                    + obj.total_frete
-                    + obj.total_seguro
-                    + obj.outras_despesas_acessorias
-                    + obj.imposto_importacao_valor
-                    + obj.ipi_valor_ipi
-                    + obj.ipi_valor_ipi_dev
-                    - obj.desconto
-                    - obj.icms_desonerado
-            )
-
         return obj
 
     def adicionar_pagamento(self, **kwargs):
@@ -884,9 +866,6 @@ class NotaFiscalProduto(Entidade):
 
     # - Declaracao de Importacao (lista 1 para * / ManyToManyField)
     declaracoes_importacao = None
-
-    # - Total ICMS
-    totais_icms_total_nota = Decimal()
 
     def __init__(self, *args, **kwargs):
         self.declaracoes_importacao = []
