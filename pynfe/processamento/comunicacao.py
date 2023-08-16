@@ -36,12 +36,14 @@ class Comunicacao(object):
     certificado = None
     certificado_senha = None
     url = None
+    commit = True  # True = Para fazer o post, False = Retornar url e xml montados
 
-    def __init__(self, uf, certificado, certificado_senha, homologacao=False):
+    def __init__(self, uf, certificado, certificado_senha, homologacao=False, commit=True):
         self.uf = uf
         self.certificado = certificado
         self.certificado_senha = certificado_senha
         self._ambiente = 2 if homologacao else 1
+        self.commit = commit
 
 
 class ComunicacaoSefaz(Comunicacao):
@@ -81,13 +83,13 @@ class ComunicacaoSefaz(Comunicacao):
         # Monta XML para envio da requisição
         xml = self._construir_xml_soap("NFeAutorizacao4", raiz)
         # Faz request no Servidor da Sefaz
-        retorno = self._post(url, xml)
-
-        # Em caso de sucesso, retorna xml com nfe e protocolo de autorização.
-        # Caso contrário, envia todo o soap de resposta da Sefaz para decisão do usuário.
-        if retorno.status_code == 200:
-            # namespace
-            ns = {"ns": NAMESPACE_NFE}
+        if self.commit:
+            retorno = self._post(url, xml)
+            # Em caso de sucesso, retorna xml com nfe e protocolo de autorização.
+            # Caso contrário, envia todo o soap de resposta da Sefaz para decisão do usuário.
+            if retorno.status_code == 200:
+                # namespace
+                ns = {"ns": NAMESPACE_NFE}
             # Procuta status no xml
             try:
                 prot = etree.fromstring(retorno.text)
@@ -119,7 +121,7 @@ class ComunicacaoSefaz(Comunicacao):
                         if status in ["100", "150"]:
                             raiz = etree.Element(
                                 "nfeProc", xmlns=NAMESPACE_NFE, versao=VERSAO_PADRAO
-                            )
+                                )
                             raiz.append(nota_fiscal)
                             raiz.append(prot_nfe)
                             return 0, raiz
@@ -136,7 +138,8 @@ class ComunicacaoSefaz(Comunicacao):
                         0
                     ].text
                     return 0, nrec, nota_fiscal
-        return 1, retorno, nota_fiscal
+            return 1, retorno, nota_fiscal
+        return url, xml
 
     def consulta_recibo(self, modelo, numero, contingencia=False):
         """
@@ -160,8 +163,10 @@ class ComunicacaoSefaz(Comunicacao):
         etree.SubElement(raiz, "nRec").text = numero
 
         # Monta XML para envio da requisição
-        xml = self._construir_xml_soap("NFeRetAutorizacao4", raiz)
-        return self._post(url, xml)
+        xml = self._construir_xml_soap('NFeRetAutorizacao4', raiz)
+        if self.commit:
+            return self._post(url, xml)
+        return url, xml
 
     def consulta_nota(self, modelo, chave, contingencia=False):
         """
@@ -180,8 +185,10 @@ class ComunicacaoSefaz(Comunicacao):
         etree.SubElement(raiz, "xServ").text = "CONSULTAR"
         etree.SubElement(raiz, "chNFe").text = chave
         # Monta XML para envio da requisição
-        xml = self._construir_xml_soap("NFeConsultaProtocolo4", raiz)
-        return self._post(url, xml)
+        xml = self._construir_xml_soap('NFeConsultaProtocolo4', raiz)
+        if self.commit:
+            return self._post(url, xml)
+        return url, xml
 
     def consulta_distribuicao(
         self, cnpj=None, cpf=None, chave=None, nsu=0, consulta_nsu_especifico=False
@@ -237,7 +244,9 @@ class ComunicacaoSefaz(Comunicacao):
         # Monta XML para envio da requisição
         xml = self._construir_xml_soap("NFeDistribuicaoDFe", raiz)
 
-        return self._post(url, xml)
+        if self.commit:
+            return self._post(url, xml)
+        return url, xml
 
     def consulta_cadastro(self, modelo, cnpj):
         """
@@ -272,7 +281,9 @@ class ComunicacaoSefaz(Comunicacao):
         # Monta XML para envio da requisição
         xml = self._construir_xml_soap("CadConsultaCadastro4", raiz)
         # Chama método que efetua a requisição POST no servidor SOAP
-        return self._post(url, xml)
+        if self.commit:
+            return self._post(url, xml)
+        return url, xml
 
     def evento(self, modelo, evento, id_lote=1):
         """
@@ -299,8 +310,10 @@ class ComunicacaoSefaz(Comunicacao):
             id_lote
         )  # numero autoincremental gerado pelo sistema
         raiz.append(evento)
-        xml = self._construir_xml_soap("NFeRecepcaoEvento4", raiz)
-        return self._post(url, xml)
+        xml = self._construir_xml_soap('NFeRecepcaoEvento4', raiz)
+        if self.commit:
+            return self._post(url, xml)
+        return url, xml
 
     def status_servico(self, modelo):
         """
@@ -310,12 +323,14 @@ class ComunicacaoSefaz(Comunicacao):
         """
         url = self._get_url(modelo, "STATUS")
         # Monta XML do corpo da requisição
-        raiz = etree.Element("consStatServ", versao=VERSAO_PADRAO, xmlns=NAMESPACE_NFE)
-        etree.SubElement(raiz, "tpAmb").text = str(self._ambiente)
-        etree.SubElement(raiz, "cUF").text = CODIGOS_ESTADOS[self.uf.upper()]
-        etree.SubElement(raiz, "xServ").text = "STATUS"
-        xml = self._construir_xml_soap("NFeStatusServico4", raiz)
-        return self._post(url, xml)
+        raiz = etree.Element('consStatServ', versao=VERSAO_PADRAO, xmlns=NAMESPACE_NFE)
+        etree.SubElement(raiz, 'tpAmb').text = str(self._ambiente)
+        etree.SubElement(raiz, 'cUF').text = CODIGOS_ESTADOS[self.uf.upper()]
+        etree.SubElement(raiz, 'xServ').text = 'STATUS'
+        xml = self._construir_xml_soap('NFeStatusServico4', raiz)
+        if self.commit:
+            return self._post(url, xml)
+        return url, xml
 
     def inutilizacao(
         self,
@@ -393,7 +408,9 @@ class ComunicacaoSefaz(Comunicacao):
         # Monta XML para envio da requisição
         xml = self._construir_xml_soap("NFeInutilizacao4", xml)
         # Faz request no Servidor da Sefaz e retorna resposta
-        return self._post(url, xml)
+        if self.commit:
+            return self._post(url, xml)
+        return url, xml
 
     def _get_url_an(self, consulta):
         # producao

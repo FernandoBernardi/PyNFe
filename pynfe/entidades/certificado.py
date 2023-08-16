@@ -26,7 +26,8 @@ class CertificadoA1(Certificado):
 
     caminho_arquivo = None
 
-    def __init__(self, caminho_arquivo=None):
+    def __init__(self, caminho_arquivo=None, **kwargs):
+        super().__init__(**kwargs)
         self.caminho_arquivo = caminho_arquivo
         self.arquivos_temp = []
 

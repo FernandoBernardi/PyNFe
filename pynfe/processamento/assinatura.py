@@ -23,6 +23,7 @@ class Assinatura(object):
 
 
 class AssinaturaA1(Assinatura):
+
     def __init__(self, certificado, senha):
         self.key, self.cert = CertificadoA1(certificado).separar_arquivo(senha)
 
@@ -31,9 +32,7 @@ class AssinaturaA1(Assinatura):
         reference = xml.find(".//*[@Id]").attrib["Id"]
 
         # retira acentos
-        xml_str = remover_acentos(
-            etree.tostring(xml, encoding="unicode", pretty_print=False)
-        )
+        xml_str = remover_acentos(etree.tostring(xml, encoding="unicode", pretty_print=False))
         xml = etree.fromstring(xml_str)
 
         signer = CustomXMLSigner(
