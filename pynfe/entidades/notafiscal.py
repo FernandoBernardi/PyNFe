@@ -379,7 +379,8 @@ class NotaFiscal(Entidade):
         self.totais_icms_desonerado += obj.icms_desonerado
         self.totais_icms_st_base_calculo += obj.icms_st_valor_base_calculo
         self.totais_icms_st_total += obj.icms_st_valor
-        self.totais_icms_total_produtos_e_servicos += obj.valor_total_bruto
+        if obj.compoe_valor_total:
+            self.totais_icms_total_produtos_e_servicos += obj.valor_total_bruto
         self.totais_icms_total_frete += obj.total_frete
         self.totais_icms_total_seguro += obj.total_seguro
         self.totais_icms_total_desconto += obj.desconto
@@ -582,7 +583,7 @@ class NotaFiscalProduto(Entidade):
     outras_despesas_acessorias = Decimal()
 
     # - Indica se valor do Item (vProd) entra no valor total da NF-e
-    compoe_valor_total = 1
+    compoe_valor_total = True
 
     #  - Valor total bruto (obrigatorio)
     valor_total_bruto = Decimal()
