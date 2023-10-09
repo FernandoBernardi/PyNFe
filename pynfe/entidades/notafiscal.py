@@ -385,8 +385,10 @@ class NotaFiscal(Entidade):
         self.totais_icms_total_seguro += obj.total_seguro
         self.totais_icms_total_desconto += obj.desconto
         self.totais_icms_total_ii += obj.imposto_importacao_valor
-        self.totais_icms_total_ipi += obj.ipi_valor_ipi
-        self.totais_icms_total_ipi_dev += obj.ipi_valor_ipi_dev
+        if obj.ipi_valor_ipi_dev == 0:
+            self.totais_icms_total_ipi += obj.ipi_valor_ipi
+        else:
+            self.totais_icms_total_ipi_dev += obj.ipi_valor_ipi_dev
         self.totais_icms_pis += obj.pis_valor
         self.totais_icms_cofins += obj.cofins_valor
         self.totais_icms_outras_despesas_acessorias += obj.outras_despesas_acessorias
