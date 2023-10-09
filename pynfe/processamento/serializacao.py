@@ -701,29 +701,30 @@ class SerializacaoXML(Serializacao):
     def _serializar_imposto_ipi(self, produto_servico, tag_raiz='imposto', retorna_string=True):
         ipitrib_lista = ('00', '01', '49', '50', '51', '99')
         ipint_lista = ('01', '02', '03', '04', '05', '51', '52', '53', '54', '55')
-        if produto_servico.ipi_codigo_enquadramento in ipitrib_lista:
-            ipi = etree.SubElement(tag_raiz, 'IPI')
-            # Preenchimento conforme Atos Normativos editados pela Receita Federal (Observação 2)
-            etree.SubElement(ipi, 'cEnq').text = produto_servico.ipi_classe_enquadramento
-            if produto_servico.ipi_classe_enquadramento == '':
-                etree.SubElement(ipi, 'cEnq').text = '999'
+        if produto_servico.ipi_valor_ipi_dev == 0:
+            if produto_servico.ipi_codigo_enquadramento in ipitrib_lista:
+                ipi = etree.SubElement(tag_raiz, 'IPI')
+                # Preenchimento conforme Atos Normativos editados pela Receita Federal (Observação 2)
+                etree.SubElement(ipi, 'cEnq').text = produto_servico.ipi_classe_enquadramento
+                if produto_servico.ipi_classe_enquadramento == '':
+                    etree.SubElement(ipi, 'cEnq').text = '999'
 
-            ipitrib = etree.SubElement(ipi, 'IPITrib')
-            etree.SubElement(ipitrib, 'CST').text = produto_servico.ipi_codigo_enquadramento
-            etree.SubElement(ipitrib, 'vBC').text = '{:.2f}'.format(produto_servico.ipi_valor_base_calculo or 0)
-            etree.SubElement(ipitrib, 'pIPI').text = '{:.2f}'.format(produto_servico.ipi_aliquota or 0)
-            etree.SubElement(ipitrib, 'vIPI').text = '{:.2f}'.format(produto_servico.ipi_valor_ipi or 0)
-        if produto_servico.ipi_codigo_enquadramento in ipint_lista:
-            ipi = etree.SubElement(tag_raiz, 'IPI')
-            # Preenchimento conforme Atos Normativos editados pela Receita Federal (Observação 2)
-            etree.SubElement(ipi, 'cEnq').text = produto_servico.ipi_classe_enquadramento
-            if produto_servico.ipi_classe_enquadramento == '':
-                etree.SubElement(ipi, 'cEnq').text = '999'
+                ipitrib = etree.SubElement(ipi, 'IPITrib')
+                etree.SubElement(ipitrib, 'CST').text = produto_servico.ipi_codigo_enquadramento
+                etree.SubElement(ipitrib, 'vBC').text = '{:.2f}'.format(produto_servico.ipi_valor_base_calculo or 0)
+                etree.SubElement(ipitrib, 'pIPI').text = '{:.2f}'.format(produto_servico.ipi_aliquota or 0)
+                etree.SubElement(ipitrib, 'vIPI').text = '{:.2f}'.format(produto_servico.ipi_valor_ipi or 0)
+            if produto_servico.ipi_codigo_enquadramento in ipint_lista:
+                ipi = etree.SubElement(tag_raiz, 'IPI')
+                # Preenchimento conforme Atos Normativos editados pela Receita Federal (Observação 2)
+                etree.SubElement(ipi, 'cEnq').text = produto_servico.ipi_classe_enquadramento
+                if produto_servico.ipi_classe_enquadramento == '':
+                    etree.SubElement(ipi, 'cEnq').text = '999'
 
-            ipint = etree.SubElement(ipi, 'IPINT')
-            # 01=Entrada tributada com alíquota zero 02=Entrada isenta 03=Entrada não-tributada 04=Entrada imune 05=Entrada com suspensão
-            # 50=Saída tributada 51=Saída tributada com alíquota zero 52=Saída isenta 53=Saída não-tributada 54=Saída imune 55=Saída com suspensão
-            etree.SubElement(ipint, 'CST').text = produto_servico.ipi_codigo_enquadramento
+                ipint = etree.SubElement(ipi, 'IPINT')
+                # 01=Entrada tributada com alíquota zero 02=Entrada isenta 03=Entrada não-tributada 04=Entrada imune 05=Entrada com suspensão
+                # 50=Saída tributada 51=Saída tributada com alíquota zero 52=Saída isenta 53=Saída não-tributada 54=Saída imune 55=Saída com suspensão
+                etree.SubElement(ipint, 'CST').text = produto_servico.ipi_codigo_enquadramento
 
     def _serializar_imposto_pis(self, produto_servico, modelo, tag_raiz='imposto', retorna_string=True):
         if modelo in [55, 65]:
