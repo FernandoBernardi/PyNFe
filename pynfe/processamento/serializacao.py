@@ -16,7 +16,7 @@ from pynfe.utils.flags import (
     NAMESPACE_SIG,
     VERSAO_QRCODE
 )
-from pynfe.utils.webservices import NFCE, MDFE
+from pynfe.utils.webservices import MDFE, get_default_webservice_nfce
 
 
 class Serializacao(object):
@@ -1312,38 +1312,43 @@ class SerializacaoQrcode(object):
         # Informar a URL da “Consulta por chave de acesso da NFC-e”.
         # A mesma URL que deve estar informada no DANFE NFC-e para consulta por chave de acesso
         lista_uf_padrao = ['PR', 'CE', 'RS', 'RJ', 'RO', 'DF']
+        sv_https_nfce = get_default_webservice_nfce(uf, 'https')
+        sv_qr_nfce = get_default_webservice_nfce(uf, 'qr')
+        sv_url_nfce = get_default_webservice_nfce(uf, 'url')
+        sv_homo_nfce = get_default_webservice_nfce(uf, 'homologacao')
+
         if uf in lista_uf_padrao:
-            qrcode = NFCE[uf]['QR'] + url
-            url_chave = NFCE[uf]['URL']
+            qrcode = sv_qr_nfce + url
+            url_chave = sv_url_nfce
         elif uf == 'SP':
             if tpamb == '1':
-                qrcode = NFCE[uf]['HTTPS'] + 'www.' + NFCE[uf]['QR'] + url
-                url_chave = NFCE[uf]['HTTPS'] + 'www.' + NFCE[uf]['URL']
+                qrcode = sv_https_nfce + 'www.' + sv_qr_nfce + url
+                url_chave = sv_https_nfce + 'www.' + sv_url_nfce
             else:
-                qrcode = NFCE[uf]['HTTPS'] + 'www.homologacao.' + NFCE[uf]['QR'] + url
-                url_chave = NFCE[uf]['HTTPS'] + 'www.homologacao.' + NFCE[uf]['URL']
+                qrcode = sv_https_nfce + 'www.homologacao.' + sv_qr_nfce + url
+                url_chave = sv_https_nfce + 'www.homologacao.' + sv_url_nfce
         # BA tem comportamento distindo para qrcode e url
         elif uf == 'BA':
             if tpamb == '1':
-                qrcode = NFCE[uf]['HTTPS'] + NFCE[uf]['QR'] + url
+                qrcode = sv_https_nfce + sv_qr_nfce + url
             else:
-                qrcode = NFCE[uf]['HOMOLOGACAO'] + NFCE[uf]['QR'] + url
-            url_chave = url_chave = NFCE[uf]['URL']
+                qrcode = sv_homo_nfce + sv_qr_nfce + url
+            url_chave = url_chave = sv_url_nfce
         # MG tem comportamento distindos qrcode e url
         elif uf == 'MG':
-            qrcode = NFCE[uf]['QR'] + url
+            qrcode = sv_qr_nfce + url
             if tpamb == '1':
-                url_chave = NFCE[uf]['HTTPS'] + NFCE[uf]['URL']
+                url_chave = sv_https_nfce + sv_qr_nfce
             else:
-                url_chave = NFCE[uf]['HOMOLOGACAO'] + NFCE[uf]['URL']
+                url_chave = sv_homo_nfce + sv_url_nfce
         # AC, AM, RR, PA,
         else:
             if tpamb == '1':
-                qrcode = NFCE[uf]['HTTPS'] + NFCE[uf]['QR'] + url
-                url_chave = NFCE[uf]['HTTPS'] + NFCE[uf]['URL']
+                qrcode = sv_https_nfce + sv_qr_nfce + url
+                url_chave = sv_https_nfce + sv_url_nfce
             else:
-                qrcode = NFCE[uf]['HOMOLOGACAO'] + NFCE[uf]['QR'] + url
-                url_chave = NFCE[uf]['HOMOLOGACAO'] + NFCE[uf]['URL']
+                qrcode = sv_homo_nfce + sv_qr_nfce + url
+                url_chave = sv_homo_nfce + sv_url_nfce
         # adicionta tag infNFeSupl com qrcode
         info = etree.Element('infNFeSupl')
         etree.SubElement(info, 'qrCode').text = '<![CDATA[' + qrcode.strip() + ']]>'
