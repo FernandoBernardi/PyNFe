@@ -79,17 +79,20 @@ NFCE = {
         'CHAVE': '',
         'INUTILIZACAO': '',
         'EVENTOS': '',
-        'QR': ''
+        'QR': 'http://www.sefaz.to.gov.br/nfce/qrcode?',
+        'URL': 'http://www.sefaz.to.gov.br/nfce/consulta'
     },
     'MA': {
         'QR': 'nfce.sefaz.ma.gov.br/portal/consultarNFCe.jsp?',
-        'HTTPS': 'http://www.',
-        'HOMOLOGACAO': 'http://www.hom.'
+        'HTTPS': '',
+        'HOMOLOGACAO': '',
+        'URL': 'http://www.sefaz.ma.gov.br/nfce/consulta'
     },
     'PI': {
-        'QR': 'sefaz.pi.gov.br/nfceweb/consultarNFCe.jsf?',
-        'HTTPS': 'http://webas.',
-        'HOMOLOGACAO': 'http://webas.'
+        'QR': 'http://www.sefaz.pi.gov.br/nfce/qrcode?',
+        'HTTPS': '',
+        'HOMOLOGACAO': '',
+        'URL': 'http://www.sefaz.pi.gov.br/nfce/consulta'
     },
     'CE': {
         'STATUS': '',
@@ -102,11 +105,10 @@ NFCE = {
         'URL': 'http://nfceh.sefaz.ce.gov.br/pages/consultaNota.jsf'
     },
     'RN': {
-        # 'QR': 'http://www.nfe.rn.gov.br/portal/consultarNFCe.jsp?',
         'QR': 'http://nfce.set.rn.gov.br/consultarNFCe.aspx?',
         'HTTPS': '',
-        'HOMOLOGACAO': ''
-
+        'HOMOLOGACAO': '',
+        'URL': 'http://www.set.rn.gov.br/nfce/consulta'
     },
     'PB': {
         'STATUS': '',
@@ -115,7 +117,8 @@ NFCE = {
         'CHAVE': '',
         'INUTILIZACAO': '',
         'EVENTOS': '',
-        'QR': 'http://www.sefaz.pb.gov.br/nfce',
+        'QR': 'http://www.sefaz.pb.gov.br/nfce?',
+        'URL': 'https://www.receita.pb.gov.br/nfce/consulta'
     },
     'PE': {
         'STATUS': '',
@@ -136,12 +139,14 @@ NFCE = {
         'CHAVE': '',
         'INUTILIZACAO': '',
         'EVENTOS': '',
-        'QR': ''
+        'QR': 'http://nfce.sefaz.al.gov.br/QRCode/consultarNFCe.jsp?',
+        'URL': 'http://www.sefaz.al.gov.br/nfce/consulta'
     },
     'SE': {
-        'QR': 'nfe.se.gov.br/portal/consultarNFCe.jsp?',
-        'HTTPS': 'https://www.',
-        'HOMOLOGACAO': 'http://www.hom.'
+        'QR': 'http://www.nfce.se.gov.br/nfce/qrcode?',
+        'HTTPS': '',
+        'HOMOLOGACAO': '',
+        'URL': 'http://www.nfce.se.gov.br/nfce/consulta'
     },
     'BA': {
         'STATUS': '',
@@ -190,13 +195,6 @@ NFCE = {
         'QR': 'http://www4.fazenda.rj.gov.br/consultaNFCe/QRCode?',
         'URL': 'www.fazenda.rj.gov.br/nfce/consulta'
     },
-    # Os Web Services de homologação da NFC-e 4.00 são:
-    # https://homologacao.nfce.fazenda.sp.gov.br/ws/NFeAutorizacao4.asmx
-    # https://homologacao.nfce.fazenda.sp.gov.br/ws/NFeStatusServico4.asmx
-    # https://homologacao.nfce.fazenda.sp.gov.br/ws/NFeConsultaProtocolo4.asmx
-    # https://homologacao.nfce.fazenda.sp.gov.br/ws/NFeRetAutorizacao4.asmx
-    # https://homologacao.nfce.fazenda.sp.gov.br/ws/NFeRecepcaoEvento4.asmx
-    # https://homologacao.nfce.fazenda.sp.gov.br/ws/NFeInutilizacao4.asmx
     'SP': {
         'STATUS': 'nfce.fazenda.sp.gov.br/ws/NFeStatusServico4.asmx',
         'AUTORIZACAO': 'nfce.fazenda.sp.gov.br/ws/NFeAutorizacao4.asmx',
@@ -260,8 +258,15 @@ NFCE = {
     },
     'MT': {
         'QR': 'sefaz.mt.gov.br/nfce/consultanfce?',
-        'HTTPS': 'http://www.',
-        'HOMOLOGACAO': 'http://homologacao.'
+        'HTTPS': 'https://nfce.',
+        'HOMOLOGACAO': 'http://homologacao.',
+        'STATUS': 'nfce.sefaz.mt.gov.br/nfcews/services/NFeStatusServico4?wsdl',
+        'AUTORIZACAO': 'nfce.sefaz.mt.gov.br/nfcews/services/NFeAutorizacao4?wsdl',
+        'RECIBO': 'nfce.sefaz.mt.gov.br/nfcews/services/NFeRetAutorizacao4?wsdl',
+        'CHAVE': 'nfce.sefaz.mt.gov.br/nfcews/services/NFeConsultaProtocolo4?wsdl',
+        'INUTILIZACAO': 'nfce.sefaz.mt.gov.br/nfcews/services/NFeInutilizacao4?wsdl',
+        'EVENTOS': 'nfce.sefaz.mt.gov.br/nfcews/services/NFeRetAutorizacao4',
+        'URL': 'sefaz.mt.gov.br/nfce/consultanfce',
     },
     'GO': {
         'STATUS': 'sefaz.go.gov.br/nfe/services/NFeStatusServico4?wsdl',
