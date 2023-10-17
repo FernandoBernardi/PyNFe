@@ -398,8 +398,8 @@
             <StatusServico>https://homologacao.nfce.sefa.pr.gov.br/nfce/NFeStatusServico4?wsdl</StatusServico>
             <Autorizacao>https://homologacao.nfce.sefa.pr.gov.br/nfce/NFeAutorizacao4?wsdl</Autorizacao>
             <RetAutorizacao>https://homologacao.nfce.sefa.pr.gov.br/nfce/NFeRetAutorizacao4?wsdl</RetAutorizacao>
-            <UrlQRCode>http://www.fazenda.pr.gov.br/nfce/qrcode</UrlQRCode>
-            <UrlConsultaChaveAcesso>http://www.fazenda.pr.gov.br/nfce/consulta</UrlConsultaChaveAcesso>
+            <UrlQRCode>https://www.fazenda.pr.gov.br/nfce/qrcode</UrlQRCode>
+            <UrlConsultaChaveAcesso>https://www.fazenda.pr.gov.br/nfce/consulta</UrlConsultaChaveAcesso>
         </Homologacao>
         <Producao>
             <RecepcaoEvento>https://nfce.sefa.pr.gov.br/nfce/NFeRecepcaoEvento4?wsdl</RecepcaoEvento>
