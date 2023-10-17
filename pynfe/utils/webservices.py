@@ -586,6 +586,8 @@ def obter_webservice(uf: str, tipo_ambiente: str, modelo: str) -> dict:
         raise ValueError('Tipo de ambiente inválido')
     if modelo == 'nfce':
         path_modelo = 'pynfe/data/Webservices/NFCe.xml'
+    elif modelo == 'nfe':
+        path_modelo = 'pynfe/data/Webservices/NFe.xml'
     else:
         raise NotImplementedError()
     root = etree.parse(path_modelo).getroot()
