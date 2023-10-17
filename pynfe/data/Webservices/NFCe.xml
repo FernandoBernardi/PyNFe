@@ -1,5 +1,5 @@
 <ServicoWeb>
-    <UF CodigoIBGE="12" Nome="Acre" Sigla="AC">
+    <UF CodigoIBGE="12" Nome="Acre" UF="AC">
         <Homologacao>
             <RecepcaoEvento>https://nfce-homologacao.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx?wsdl
             </RecepcaoEvento>
@@ -27,7 +27,7 @@
             <UrlConsultaChaveAcesso>http://www.sefaznet.ac.gov.br/nfce/consulta</UrlConsultaChaveAcesso>
         </Producao>
     </UF>
-    <UF CodigoIBGE="27" Nome="Alagoas" Sigla="AL">
+    <UF CodigoIBGE="27" Nome="Alagoas" UF="AL">
         <Homologacao>
             <RecepcaoEvento>https://nfce-homologacao.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx?wsdl
             </RecepcaoEvento>
@@ -386,8 +386,8 @@
             <Autorizacao>https://nfce.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx?wsdl</Autorizacao>
             <RetAutorizacao>https://nfce.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx?wsdl
             </RetAutorizacao>
-            <UrlQRCode>http://www.receita.pb.gov.br/nfce</UrlQRCode>
-            <UrlConsultaChaveAcesso>https://www.receita.pb.gov.br/nfce/consulta</UrlConsultaChaveAcesso>
+            <UrlQRCode>http://www.sefaz.pb.gov.br/nfce</UrlQRCode>
+            <UrlConsultaChaveAcesso>http://www.sefaz.pb.gov.br/nfce/consulta</UrlConsultaChaveAcesso>
         </Producao>
     </UF>
     <UF CodigoIBGE="41" Nome="Paraná" UF="PR">
@@ -659,8 +659,7 @@
             <UrlQRCode>https://www.nfce.fazenda.sp.gov.br/qrcode</UrlQRCode>
             <UrlConsultaChaveAcesso>https://www.nfce.fazenda.sp.gov.br/consulta</UrlConsultaChaveAcesso>
         </Producao>
-    </UF>
-    <UF CodigoIBGE="28" Nome="Sergipe" UF="SE">
+    </UF>    <UF CodigoIBGE="28" Nome="Sergipe" UF="SE">
         <Homologacao>
             <RecepcaoEvento>https://nfce-homologacao.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx?wsdl
             </RecepcaoEvento>

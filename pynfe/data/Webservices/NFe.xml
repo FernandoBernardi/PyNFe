@@ -1,5 +1,5 @@
 <ServicoWeb>
-    <UF CodigoIBGE="12" Nome="Acre" Sigla="AC">
+    <UF CodigoIBGE="12" Nome="Acre" UF="AC">
         <Homologacao>
             <RecepcaoEvento>https://nfe-homologacao.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx?wsdl
             </RecepcaoEvento>
@@ -31,7 +31,7 @@
             </ManifestacaoDestinatario>
         </Producao>
     </UF>
-    <UF CodigoIBGE="27" Nome="Alagoas" Sigla="AL">
+    <UF CodigoIBGE="27" Nome="Alagoas" UF="AL">
         <Homologacao>
             <RecepcaoEvento>https://nfe-homologacao.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx?wsdl
             </RecepcaoEvento>
