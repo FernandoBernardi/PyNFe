@@ -1,4 +1,8 @@
+import os
+
 from lxml import etree
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 NFCE = {
     'RO': {
@@ -578,6 +582,7 @@ def obter_webservice(uf: str, tipo_ambiente: str, modelo: str) -> dict:
     """
     uf = uf.upper()
     modelo = modelo.lower()
+    base_path_web_services = os.path.join(BASE_DIR, 'pynfe', 'data', 'Webservices')
     if tipo_ambiente == '1':
         tipo_ambiente = 'Producao'
     elif tipo_ambiente == '2':
@@ -585,9 +590,9 @@ def obter_webservice(uf: str, tipo_ambiente: str, modelo: str) -> dict:
     else:
         raise ValueError('Tipo de ambiente inválido')
     if modelo == 'nfce':
-        path_modelo = 'pynfe/data/Webservices/NFCe.xml'
+        path_modelo = os.path.join(base_path_web_services, 'NFCe.xml')
     elif modelo == 'nfe':
-        path_modelo = 'pynfe/data/Webservices/NFe.xml'
+        path_modelo = os.path.join(base_path_web_services, 'NFe.xml')
     else:
         raise NotImplementedError()
     root = etree.parse(path_modelo).getroot()
