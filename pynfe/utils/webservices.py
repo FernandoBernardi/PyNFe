@@ -2,7 +2,9 @@ import os
 
 from lxml import etree
 
-from pynfe.data.Webservices import *
+CAMINHO_DATA = os.path.join(os.path.dirname(
+    os.path.abspath(__file__)), '..', 'data')
+CAMINHO_WEBSERVICES = os.path.join(CAMINHO_DATA, 'Webservices')
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -584,7 +586,6 @@ def obter_webservice(uf: str, tipo_ambiente: str, modelo: str) -> dict:
     """
     uf = uf.upper()
     modelo = modelo.lower()
-    base_path_web_services = os.path.join(BASE_DIR, 'pynfe', 'data', 'Webservices')
     if tipo_ambiente == '1':
         tipo_ambiente = 'Producao'
     elif tipo_ambiente == '2':
@@ -592,9 +593,9 @@ def obter_webservice(uf: str, tipo_ambiente: str, modelo: str) -> dict:
     else:
         raise ValueError('Tipo de ambiente inválido')
     if modelo == 'nfce':
-        path_modelo = os.path.join(base_path_web_services, 'NFCe.xml')
+        path_modelo = os.path.join(CAMINHO_WEBSERVICES, 'NFCe.xml')
     elif modelo == 'nfe':
-        path_modelo = os.path.join(base_path_web_services, 'NFe.xml')
+        path_modelo = os.path.join(CAMINHO_WEBSERVICES, 'NFe.xml')
     else:
         raise NotImplementedError()
     root = etree.parse(path_modelo).getroot()
