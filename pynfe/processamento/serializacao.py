@@ -1306,7 +1306,7 @@ class SerializacaoQrcode(object):
         url_hash = hashlib.sha1(url_complementar.encode()).digest()
         url_hash = base64.b16encode(url_hash).decode()
 
-        url = 'p={}|{}'.format(url, url_hash)
+        url = '?p={}|{}'.format(url, url_hash)
         webservice_urls = obter_webservice(uf, tpamb, 'nfce')
         qrcode = webservice_urls.get('QR') + url
         url_chave = webservice_urls.get('URL')
