@@ -566,20 +566,6 @@ CTE = {
 }
 
 
-def get_default_webservice_nfce(uf: str, key: str, default_server: str = 'SVRS') -> str:
-    """
-    Obtem o webservice padrão para o estado informado
-    """
-    uf = uf.upper()
-    key = key.upper()
-    try:
-        if uf in NFCE and key in NFCE[uf] and NFCE[uf][key] != '':
-            return NFCE[uf][key]
-        return NFCE[default_server][key]
-    except KeyError:
-        return NFCE[default_server][key]
-
-
 def obter_webservice(uf: str, tipo_ambiente: str, modelo: str) -> dict:
     """
     Obtem as informações do webservice para o estado informado

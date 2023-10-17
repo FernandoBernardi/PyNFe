@@ -16,7 +16,7 @@ from pynfe.utils.flags import (
     NAMESPACE_SIG,
     VERSAO_QRCODE
 )
-from pynfe.utils.webservices import MDFE, get_default_webservice_nfce, obter_webservice
+from pynfe.utils.webservices import MDFE, obter_webservice
 
 
 class Serializacao(object):
