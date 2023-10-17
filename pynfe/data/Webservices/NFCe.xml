@@ -386,8 +386,8 @@
             <Autorizacao>https://nfce.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx?wsdl</Autorizacao>
             <RetAutorizacao>https://nfce.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx?wsdl
             </RetAutorizacao>
-            <UrlQRCode>http://www.sefaz.pb.gov.br/nfce</UrlQRCode>
-            <UrlConsultaChaveAcesso>http://www.sefaz.pb.gov.br/nfce/consulta</UrlConsultaChaveAcesso>
+            <UrlQRCode>https://www.sefaz.pb.gov.br/nfce</UrlQRCode>
+            <UrlConsultaChaveAcesso>https://www.sefaz.pb.gov.br/nfce/consulta</UrlConsultaChaveAcesso>
         </Producao>
     </UF>
     <UF CodigoIBGE="41" Nome="Paraná" UF="PR">
