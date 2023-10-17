@@ -1,10 +1,5 @@
-"""
-	@author: Junior Tada, Leonardo Tada
-"""
+from lxml import etree
 
-# http://nfce.encat.org/desenvolvedor/qrcode/
-# http://nfce.encat.org/consumidor/consulte-sua-nota/ 	url consulta por chave
-# Nfc-e
 NFCE = {
     'RO': {
         'STATUS': '',
@@ -575,3 +570,35 @@ def get_default_webservice_nfce(uf: str, key: str, default_server: str = 'SVRS')
         return NFCE[default_server][key]
     except KeyError:
         return NFCE[default_server][key]
+
+
+def obter_webservice(uf: str, tipo_ambiente: str, modelo: str) -> dict:
+    """
+    Obtem as informações do webservice para o estado informado
+    """
+    uf = uf.upper()
+    modelo = modelo.lower()
+    if tipo_ambiente == '1':
+        tipo_ambiente = 'Producao'
+    elif tipo_ambiente == '2':
+        tipo_ambiente = 'Homologacao'
+    else:
+        raise ValueError('Tipo de ambiente inválido')
+    if modelo == 'nfce':
+        path_modelo = 'pynfe/data/Webservices/NFCe.xml'
+    else:
+        raise NotImplementedError()
+    root = etree.parse(path_modelo).getroot()
+    for uf_tag in root.findall('UF'):
+        if uf_tag.get('UF') == uf:
+            return {
+                'STATUS': uf_tag.find(f'{tipo_ambiente}/StatusServico').text,
+                'QR': uf_tag.find(f'{tipo_ambiente}/UrlQRCode').text,
+                'URL': uf_tag.find(f'{tipo_ambiente}/UrlConsultaChaveAcesso').text,
+                'AUTORIZACAO': uf_tag.find(f'{tipo_ambiente}/Autorizacao').text,
+                'INUTILIZACAO': uf_tag.find(f'{tipo_ambiente}/Inutilizacao').text,
+                'EVENTOS': uf_tag.find(f'{tipo_ambiente}/RecepcaoEvento').text,
+                'RECIBO': uf_tag.find(f'{tipo_ambiente}/RetAutorizacao').text,
+                'CHAVE': uf_tag.find(f'{tipo_ambiente}/Consulta').text,
+            }
+    raise ValueError(f'WEBSERVICE {uf} {tipo_ambiente} não encontrada!')

@@ -16,7 +16,7 @@ from pynfe.utils.flags import (
     NAMESPACE_SIG,
     VERSAO_QRCODE
 )
-from pynfe.utils.webservices import MDFE, get_default_webservice_nfce
+from pynfe.utils.webservices import MDFE, get_default_webservice_nfce, obter_webservice
 
 
 class Serializacao(object):
@@ -1307,48 +1307,9 @@ class SerializacaoQrcode(object):
         url_hash = base64.b16encode(url_hash).decode()
 
         url = 'p={}|{}'.format(url, url_hash)
-
-        # url_chave - Texto com a URL de consulta por chave de acesso a ser impressa no DANFE NFC-e.
-        # Informar a URL da “Consulta por chave de acesso da NFC-e”.
-        # A mesma URL que deve estar informada no DANFE NFC-e para consulta por chave de acesso
-        lista_uf_padrao = ['PR', 'CE', 'RS', 'RJ', 'RO', 'DF']
-        sv_https_nfce = get_default_webservice_nfce(uf, 'https')
-        sv_qr_nfce = get_default_webservice_nfce(uf, 'qr')
-        sv_url_nfce = get_default_webservice_nfce(uf, 'url')
-        sv_homo_nfce = get_default_webservice_nfce(uf, 'homologacao')
-
-        if uf in lista_uf_padrao:
-            qrcode = sv_qr_nfce + url
-            url_chave = sv_url_nfce
-        elif uf == 'SP':
-            if tpamb == '1':
-                qrcode = sv_https_nfce + 'www.' + sv_qr_nfce + url
-                url_chave = sv_https_nfce + 'www.' + sv_url_nfce
-            else:
-                qrcode = sv_https_nfce + 'www.homologacao.' + sv_qr_nfce + url
-                url_chave = sv_https_nfce + 'www.homologacao.' + sv_url_nfce
-        # BA tem comportamento distindo para qrcode e url
-        elif uf == 'BA':
-            if tpamb == '1':
-                qrcode = sv_https_nfce + sv_qr_nfce + url
-            else:
-                qrcode = sv_homo_nfce + sv_qr_nfce + url
-            url_chave = url_chave = sv_url_nfce
-        # MG tem comportamento distindos qrcode e url
-        elif uf == 'MG':
-            qrcode = sv_qr_nfce + url
-            if tpamb == '1':
-                url_chave = sv_https_nfce + sv_qr_nfce
-            else:
-                url_chave = sv_homo_nfce + sv_url_nfce
-        # AC, AM, RR, PA,
-        else:
-            if tpamb == '1':
-                qrcode = sv_https_nfce + sv_qr_nfce + url
-                url_chave = sv_https_nfce + sv_url_nfce
-            else:
-                qrcode = sv_homo_nfce + sv_qr_nfce + url
-                url_chave = sv_homo_nfce + sv_url_nfce
+        webservice_urls = obter_webservice(uf, tpamb, 'nfce')
+        qrcode = webservice_urls.get('QR') + url
+        url_chave = webservice_urls.get('URL')
         # adicionta tag infNFeSupl com qrcode
         info = etree.Element('infNFeSupl')
         etree.SubElement(info, 'qrCode').text = '<![CDATA[' + qrcode.strip() + ']]>'
