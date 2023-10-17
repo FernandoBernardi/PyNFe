@@ -28,7 +28,7 @@ setuptools.setup(
     packages=setuptools.find_packages(
         exclude=['tests']),
     package_data={
-        'pynfe': ['data/**/*.txt'],
+        'pynfe': ['data/**/*.txt', 'data/**/*.xml'],
     },
     install_requires=[
         'pyopenssl',

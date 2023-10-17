@@ -2,6 +2,8 @@ import os
 
 from lxml import etree
 
+from pynfe.data.Webservices import *
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 NFCE = {
@@ -582,7 +584,7 @@ def obter_webservice(uf: str, tipo_ambiente: str, modelo: str) -> dict:
     """
     uf = uf.upper()
     modelo = modelo.lower()
-    base_path_web_services = '../data/Webservices'
+    base_path_web_services = os.path.join(BASE_DIR, 'pynfe', 'data', 'Webservices')
     if tipo_ambiente == '1':
         tipo_ambiente = 'Producao'
     elif tipo_ambiente == '2':

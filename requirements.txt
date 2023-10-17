@@ -1,6 +1,6 @@
 # Dependencias basicas
 pyopenssl==23.0.0
-requests==2.28.1
+requests
 lxml==4.9.2
 signxml==2.9.0
 
