@@ -499,9 +499,10 @@ class SerializacaoXML(Serializacao):
             icms_item = etree.SubElement(icms, 'ICMS' + produto_servico.icms_modalidade)
             etree.SubElement(icms_item, 'orig').text = str(produto_servico.icms_origem)
             etree.SubElement(icms_item, 'CST').text = '60'
-            etree.SubElement(icms_item, 'vBCSTRet').text = '0'
-            etree.SubElement(icms_item, 'pST').text = '{:.4f}'.format(0)
-            etree.SubElement(icms_item, 'vICMSSTRet').text = '0'  # Informar o valor do ICMS ST retido na UF remetente
+            etree.SubElement(icms_item, 'vBCSTRet').text = '{:.2f}'.format(produto_servico.icms_bc_st_retido)
+            etree.SubElement(icms_item, 'pST').text = '{:.2f}'.format(produto_servico.icms_percentual_retido)
+            etree.SubElement(icms_item, 'vICMSSubstituto').text = '{:.2f}'.format(produto_servico.icms_substituto)
+            etree.SubElement(icms_item, 'vICMSSTRet').text = '{:.2f}'.format(produto_servico.icms_st_retido)
 
             if produto_servico.fcp_st_valor:
                 etree.SubElement(icms_item, 'vBCFCPSTRet').text = '{:.2f}'.format(
@@ -654,6 +655,10 @@ class SerializacaoXML(Serializacao):
             icms_item = etree.SubElement(icms, 'ICMSSN' + produto_servico.icms_modalidade)
             etree.SubElement(icms_item, 'orig').text = str(produto_servico.icms_origem)
             etree.SubElement(icms_item, 'CSOSN').text = produto_servico.icms_csosn
+            etree.SubElement(icms_item, 'vBCSTRet').text = '{:.2f}'.format(produto_servico.icms_bc_st_retido)
+            etree.SubElement(icms_item, 'pST').text = '{:.2f}'.format(produto_servico.icms_percentual_retido)
+            etree.SubElement(icms_item, 'vICMSSubstituto').text = '{:.2f}'.format(produto_servico.icms_substituto)
+            etree.SubElement(icms_item, 'vICMSSTRet').text = '{:.2f}'.format(produto_servico.icms_st_retido)
 
         # 900=Outros
         elif produto_servico.icms_modalidade == '900':

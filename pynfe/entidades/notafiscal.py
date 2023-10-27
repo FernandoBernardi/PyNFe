@@ -672,6 +672,18 @@ class NotaFiscalProduto(Entidade):
     #    - Valor do ICMS ST
     icms_st_valor = Decimal()
 
+    #    - Base de cálculo do ICMS ST retido na UF remetente
+    icms_bc_st_retido = Decimal()
+
+    #   - Valor do ICMS ST retido na UF remetente
+    icms_percentual_retido = Decimal()
+
+    #   - Valor do ICMS ST retido na UF remetente
+    icms_substituto = Decimal()
+
+    #   - Valor do ICMS ST retido na UF remetente
+    icms_st_retido = Decimal()
+
     #    - Fundo de Combate a Pobreza
     fcp_base_calculo = Decimal()
     fcp_percentual = Decimal()
@@ -682,7 +694,6 @@ class NotaFiscalProduto(Entidade):
     fcp_st_valor = Decimal()
 
     fcp_destino_valor = Decimal()
-    fcp_st_valor = Decimal()
     fcp_st_ret_valor = Decimal()
     icms_inter_destino_valor = Decimal()
     icms_inter_remetente_valor = Decimal()
