@@ -364,17 +364,15 @@ class ComunicacaoSefaz(Comunicacao):
         etree.SubElement(inf_inut, 'nNFIni').text = str(numero_inicial)
         etree.SubElement(inf_inut, 'nNFFin').text = str(numero_final)
         etree.SubElement(inf_inut, 'xJust').text = justificativa
-
-        # assinatura
-        a1 = AssinaturaA1(self.certificado, self.certificado_senha)
-        xml = a1.assinar(raiz)
-
-        # Monta XML para envio da requisição
-        xml = self._construir_xml_soap('NFeInutilizacao4', xml)
-        # Faz request no Servidor da Sefaz e retorna resposta
         if self.commit:
+            # assinatura
+            a1 = AssinaturaA1(self.certificado, self.certificado_senha)
+            xml = a1.assinar(raiz)
+            # Monta XML para envio da requisição
+            xml = self._construir_xml_soap('NFeInutilizacao4', xml)
+            # Faz request no Servidor da Sefaz e retorna resposta
             return self._post(url, xml)
-        return url, xml
+        return url, raiz
 
     def _get_url_an(self, consulta):
         # producao
