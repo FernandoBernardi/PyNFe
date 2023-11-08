@@ -360,7 +360,7 @@ class ComunicacaoSefaz(Comunicacao):
         else:
             etree.SubElement(inf_inut, 'CPF').text = cnpj
         etree.SubElement(inf_inut, 'mod').text = '55' if modelo == 'nfe' else '65'  # 55=NF-e; 65=NFC-e
-        etree.SubElement(inf_inut, 'serie').text = str(serie)
+        etree.SubElement(inf_inut, 'serie').text = str(int(serie))
         etree.SubElement(inf_inut, 'nNFIni').text = str(numero_inicial)
         etree.SubElement(inf_inut, 'nNFFin').text = str(numero_final)
         etree.SubElement(inf_inut, 'xJust').text = justificativa
