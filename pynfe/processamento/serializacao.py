@@ -716,8 +716,12 @@ class SerializacaoXML(Serializacao):
 
                 ipitrib = etree.SubElement(ipi, 'IPITrib')
                 etree.SubElement(ipitrib, 'CST').text = produto_servico.ipi_codigo_enquadramento
-                etree.SubElement(ipitrib, 'vBC').text = '{:.2f}'.format(produto_servico.ipi_valor_base_calculo or 0)
-                etree.SubElement(ipitrib, 'pIPI').text = '{:.2f}'.format(produto_servico.ipi_aliquota or 0)
+                if produto_servico.ipi_tipo_calculo == 'percentual' or not produto_servico.ipi_tipo_calculo:
+                    etree.SubElement(ipitrib, 'vBC').text = '{:.2f}'.format(produto_servico.ipi_valor_base_calculo or 0)
+                    etree.SubElement(ipitrib, 'pIPI').text = '{:.2f}'.format(produto_servico.ipi_aliquota or 0)
+                else:
+                    etree.SubElement(ipitrib, 'qUnid').text = '{:.4f}'.format(produto_servico.quantidade_comercial)
+                    etree.SubElement(ipitrib, 'vUnid').text = '{:.4f}'.format(produto_servico.ipi_valor_unidade or 0)
                 etree.SubElement(ipitrib, 'vIPI').text = '{:.2f}'.format(produto_servico.ipi_valor_ipi or 0)
             if produto_servico.ipi_codigo_enquadramento in ipint_lista:
                 ipi = etree.SubElement(tag_raiz, 'IPI')
