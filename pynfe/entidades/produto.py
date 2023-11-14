@@ -120,6 +120,10 @@ class Produto(Entidade):
     icms_percentual_retido = Decimal()
     icms_substituto = Decimal()
     icms_st_retido = Decimal()
+    icms_efetivo = Decimal()
+    icms_percentual_efetivo = Decimal()
+    icms_bc_efetivo = Decimal()
+    icms_percentual_reducao_bc_efetivo = Decimal()
 
     # # PIS
     pis_modalidade = str()

@@ -684,6 +684,18 @@ class NotaFiscalProduto(Entidade):
     #   - Valor do ICMS ST retido na UF remetente
     icms_st_retido = Decimal()
 
+    #   - Valor do ICMS Efetivo da UF de destino
+    icms_efetivo = Decimal()
+
+    #   - Percentual ICMS Efetivo da UF de destino
+    icms_percentual_efetivo = Decimal()
+
+    #   - Base de cálculo do ICMS Efetivo da UF de destino
+    icms_bc_efetivo = Decimal()
+
+    #   - Percentual redução da BC ICMS Efetivo da UF de destino
+    icms_percentual_reducao_bc_efetivo = Decimal()
+
     #    - Fundo de Combate a Pobreza
     fcp_base_calculo = Decimal()
     fcp_percentual = Decimal()

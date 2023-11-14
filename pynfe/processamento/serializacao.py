@@ -659,6 +659,10 @@ class SerializacaoXML(Serializacao):
             etree.SubElement(icms_item, 'pST').text = '{:.2f}'.format(produto_servico.icms_percentual_retido)
             etree.SubElement(icms_item, 'vICMSSubstituto').text = '{:.2f}'.format(produto_servico.icms_substituto)
             etree.SubElement(icms_item, 'vICMSSTRet').text = '{:.2f}'.format(produto_servico.icms_st_retido)
+            etree.SubElement(icms_item, 'pRedBCEfet').text = '{:.2f}'.format(produto_servico.icms_percentual_reducao_bc_efetivo)
+            etree.SubElement(icms_item, 'vBCEfet').text = '{:.2f}'.format(produto_servico.icms_bc_efetivo)
+            etree.SubElement(icms_item, 'pICMSEfet').text = '{:.2f}'.format(produto_servico.icms_percentual_efetivo)
+            etree.SubElement(icms_item, 'vICMSEfet').text = '{:.2f}'.format(produto_servico.icms_efetivo)
 
         # 900=Outros
         elif produto_servico.icms_modalidade == '900':
