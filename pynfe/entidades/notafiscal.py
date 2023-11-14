@@ -406,6 +406,12 @@ class NotaFiscal(Entidade):
         obj = NotaFiscalPagamento(**kwargs)
         self.pagamentos.append(obj)
 
+    def adicionar_transportadora(self, **kwargs):
+        u"""Adiciona uma instancia de Volume de Transportadora"""
+        obj = NotaFiscalTransportadora(**kwargs)
+        self.transporte_transportadora.append(obj)
+        return obj
+
     def adicionar_transporte_volume(self, **kwargs):
         u"""Adiciona uma instancia de Volume de Transporte"""
         obj = NotaFiscalTransporteVolume(**kwargs)
@@ -954,6 +960,29 @@ class NotaFiscalDeclaracaoImportacaoAdicao(Entidade):
 
     #   - Codigo fabricante
     codigo_fabricante = str()
+
+
+class NotaFiscalTransportadora(Entidade):
+    # - Tipo de Documento (obrigatorio) - default CNPJ
+    tipo_documento = 'CNPJ'
+
+    # - Numero do Documento (obrigatorio)
+    numero_documento = str()
+
+    # - Razao Social
+    razao_social = str()
+
+    # - Inscrição Estadual
+    inscricao_estadual = str()
+
+    # - Endereço
+    endereco_logradouro = str()
+
+    # - Municipio
+    endereco_municipio = str()
+
+    # - UF
+    endereco_uf = str()
 
 
 class NotaFiscalTransporteVolume(Entidade):
