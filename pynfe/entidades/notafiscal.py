@@ -406,12 +406,6 @@ class NotaFiscal(Entidade):
         obj = NotaFiscalPagamento(**kwargs)
         self.pagamentos.append(obj)
 
-    def adicionar_transportadora(self, **kwargs):
-        u"""Adiciona uma instancia de Volume de Transportadora"""
-        obj = NotaFiscalTransportadora(**kwargs)
-        self.transporte_transportadora.append(obj)
-        return obj
-
     def adicionar_transporte_volume(self, **kwargs):
         u"""Adiciona uma instancia de Volume de Transporte"""
         obj = NotaFiscalTransporteVolume(**kwargs)
