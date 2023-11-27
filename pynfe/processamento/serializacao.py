@@ -708,7 +708,7 @@ class SerializacaoXML(Serializacao):
             raise NotImplementedError
 
     def _serializar_imposto_ipi(self, produto_servico, tag_raiz='imposto', retorna_string=True):
-        ipitrib_lista = ('00', '01', '49', '50', '51', '99')
+        ipitrib_lista = ('00', '01', '49', '50', '99')
         ipint_lista = ('01', '02', '03', '04', '05', '51', '52', '53', '54', '55')
         if produto_servico.ipi_valor_ipi_dev == 0:
             if produto_servico.ipi_codigo_enquadramento in ipitrib_lista:
