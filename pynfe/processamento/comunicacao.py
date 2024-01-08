@@ -116,11 +116,10 @@ class ComunicacaoSefaz(Comunicacao):
                         return 1, retorno, nota_fiscal
                 else:
                     # Retorna id do protocolo para posterior consulta em caso de sucesso.
-                    rec = prot[0][0]
-                    status = rec.xpath("ns:retEnviNFe/ns:cStat", namespaces=ns)[0].text
+                    status = prot.xpath("//ns:retEnviNFe/ns:cStat", namespaces=ns)[0].text
                     # Lote Recebido com Sucesso!
                     if status == '103':
-                        nrec = rec.xpath("ns:retEnviNFe/ns:infRec/ns:nRec", namespaces=ns)[0].text
+                        nrec = prot.xpath("//ns:retEnviNFe/ns:infRec/ns:nRec", namespaces=ns)[0].text
                         return 0, nrec, nota_fiscal
             return 1, retorno, nota_fiscal
         return url, xml
@@ -853,11 +852,10 @@ class ComunicacaoMDFe(Comunicacao):
                     return 1, retorno, manifesto
             else:
                 # Retorna id do protocolo para posterior consulta em caso de sucesso.
-                rec = prot[1][0]
-                status = rec.xpath("ns:retEnviMDFe/ns:cStat", namespaces=ns)[0].text
+                status = prot.xpath("//ns:retEnviMDFe/ns:cStat", namespaces=ns)[0].text
                 # Lote Recebido com Sucesso!
                 if status == self._edoc_situacao_arquivo_recebido_com_sucesso:
-                    nrec = rec.xpath("ns:retEnviMDFe/ns:infRec/ns:nRec", namespaces=ns)[0].text
+                    nrec = prot.xpath("//ns:retEnviMDFe/ns:infRec/ns:nRec", namespaces=ns)[0].text
                     return 0, nrec, manifesto
         return 1, retorno, manifesto
 
