@@ -566,15 +566,16 @@ CTE = {
 }
 
 
-def obter_webservice(uf: str, tipo_ambiente: str, modelo: str) -> dict:
+def obter_webservice(uf: str, tpamb: int, modelo: str) -> dict:
     """
     Obtem as informações do webservice para o estado informado
     """
     uf = uf.upper()
     modelo = modelo.lower()
-    if tipo_ambiente == '1':
+    tpamb = int(tpamb)
+    if tpamb == 1:
         tipo_ambiente = 'Producao'
-    elif tipo_ambiente == '2':
+    elif tpamb == 2:
         tipo_ambiente = 'Homologacao'
     else:
         raise ValueError('Tipo de ambiente inválido')

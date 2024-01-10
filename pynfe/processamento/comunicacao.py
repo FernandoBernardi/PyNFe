@@ -23,7 +23,7 @@ from pynfe.utils.flags import (
     VERSAO_CTE,
     NAMESPACE_CTE_METODO
 )
-from pynfe.utils.webservices import NFE, NFCE, NFSE, MDFE, CTE
+from pynfe.utils.webservices import NFE, NFCE, NFSE, MDFE, CTE, obter_webservice
 from .assinatura import AssinaturaA1
 
 
@@ -389,95 +389,8 @@ class ComunicacaoSefaz(Comunicacao):
 
     def _get_url(self, modelo, consulta, contingencia=False):
         """ Retorna a url para comunicação com o webservice """
-        if contingencia:
-            contingencia_svrs = ['AM', 'BA', 'CE', 'GO', 'MA', 'MS', 'MT', 'PE', 'PR']
-            contingencia_svan = ['AC', 'AL', 'AP', 'DF', 'ES', 'MG', 'PA', 'PB', 'PI', 'RJ', 'RN', 'RO', 'RR', 'RS',
-                                 'SC', 'SE', 'SP', 'TO']
-
-            if self.uf.upper() in contingencia_svrs:
-                if self._ambiente == 1:
-                    ambiente = 'HTTPS'
-                else:
-                    ambiente = 'HOMOLOGACAO'
-                if modelo == 'nfe':
-                    # nfe Ex: https://nfe.fazenda.pr.gov.br/nfe/NFeStatusServico3
-                    self.url = NFE['SVRS'][ambiente] + NFE['SVRS'][consulta]
-                elif modelo == 'nfce':
-                    # nfce Ex: https://homologacao.nfce.fazenda.pr.gov.br/nfce/NFeStatusServico3
-                    self.url = NFCE['SVRS'][ambiente] + NFCE['SVRS'][consulta]
-                else:
-                    raise Exception('Modelo não encontrado! Defina modelo="nfe" ou "nfce"')
-            elif self.uf.upper() in contingencia_svan:
-                if self._ambiente == 1:
-                    ambiente = 'HTTPS'
-                else:
-                    ambiente = 'HOMOLOGACAO'
-                if modelo == 'nfe':
-                    # nfe Ex: https://nfe.fazenda.pr.gov.br/nfe/NFeStatusServico3
-                    self.url = NFE['SVAN'][ambiente] + NFE['SVAN'][consulta]
-                elif modelo == 'nfce':
-                    # nfce Ex: https://homologacao.nfce.fazenda.pr.gov.br/nfce/NFeStatusServico3
-                    self.url = NFCE['SVRS'][ambiente] + NFCE['SVRS'][consulta]
-                else:
-                    raise Exception('Modelo não encontrado! Defina modelo="nfe" ou "nfce"')
-            return self.url
-
-        # estado que implementam webservices proprios
-        lista = ['PR', 'MS', 'SP', 'AM', 'CE', 'BA', 'GO', 'MG', 'MT', 'PE', 'RS']
-        if self.uf.upper() in lista:
-            if self._ambiente == 1:
-                ambiente = 'HTTPS'
-            else:
-                ambiente = 'HOMOLOGACAO'
-            if modelo == 'nfe':
-                # CE é a única UF que possuem NFE SVRS e NFCe próprio
-                if self.uf.upper() == 'CE':
-                    self.url = NFE['SVRS'][ambiente] + NFE['SVRS'][consulta]
-                else:
-                    # nfe Ex: https://nfe.fazenda.pr.gov.br/nfe/NFeStatusServico3
-                    self.url = NFE[self.uf.upper()][ambiente] + NFE[self.uf.upper()][consulta]
-            elif modelo == 'nfce':
-                # PE e BA são as únicas UF'sque possuem NFE proprio e SVRS para NFCe
-                if self.uf.upper() == 'PE' or self.uf.upper() == 'BA':
-                    self.url = NFCE['SVRS'][ambiente] + NFCE['SVRS'][consulta]
-                else:
-                    # nfce Ex: https://homologacao.nfce.fazenda.pr.gov.br/nfce/NFeStatusServico3
-                    self.url = NFCE[self.uf.upper()][ambiente] + NFCE[self.uf.upper()][consulta]
-            else:
-                raise Exception('Modelo não encontrado! Defina modelo="nfe" ou "nfce"')
-        # Estados que utilizam outros ambientes
-        else:
-            lista_svrs = ['AC', 'AL', 'AP', 'DF', 'ES', 'PB', 'PI', 'RJ', 'RN', 'RO', 'RR', 'SC', 'SE', 'TO', 'PA']
-            if self.uf.upper() in lista_svrs:
-                if self._ambiente == 1:
-                    ambiente = 'HTTPS'
-                else:
-                    ambiente = 'HOMOLOGACAO'
-                if modelo == 'nfe':
-                    # nfe Ex: https://nfe.fazenda.pr.gov.br/nfe/NFeStatusServico3
-                    self.url = NFE['SVRS'][ambiente] + NFE['SVRS'][consulta]
-                elif modelo == 'nfce':
-                    # nfce Ex: https://homologacao.nfce.fazenda.pr.gov.br/nfce/NFeStatusServico3
-                    self.url = NFCE['SVRS'][ambiente] + NFCE['SVRS'][consulta]
-                else:
-                    raise Exception('Modelo não encontrado! Defina modelo="nfe" ou "nfce"')
-            # unico UF que utiliza SVAN ainda para NF-e
-            # SVRS para NFC-e
-            elif self.uf.upper() == 'MA':
-                if self._ambiente == 1:
-                    ambiente = 'HTTPS'
-                else:
-                    ambiente = 'HOMOLOGACAO'
-                if modelo == 'nfe':
-                    # nfe Ex: https://nfe.fazenda.pr.gov.br/nfe/NFeStatusServico3
-                    self.url = NFE['SVAN'][ambiente] + NFE['SVAN'][consulta]
-                elif modelo == 'nfce':
-                    # nfce Ex: https://homologacao.nfce.fazenda.pr.gov.br/nfce/NFeStatusServico3
-                    self.url = NFCE['SVRS'][ambiente] + NFCE['SVRS'][consulta]
-                else:
-                    raise Exception('Modelo não encontrado! Defina modelo="nfe" ou "nfce"')
-            else:
-                raise Exception(f"Url não encontrada para {modelo} e {consulta} {self.uf.upper()}")
+        webservice_urls = obter_webservice(self.uf.upper(), self._ambiente, modelo)
+        self.url = webservice_urls[consulta]
         return self.url
 
     def _construir_xml_soap(self, metodo, dados, cabecalho=False):
