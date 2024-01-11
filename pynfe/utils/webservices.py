@@ -588,10 +588,14 @@ def obter_webservice(uf: str, tpamb: int, modelo: str) -> dict:
     root = etree.parse(path_modelo).getroot()
     for uf_tag in root.findall('UF'):
         if uf_tag.get('UF') == uf:
+            qrcode_consulta = url_consulta_chave_acesso = ''
+            if modelo == 'nfce':
+                qrcode_consulta = uf_tag.find(f'{tipo_ambiente}/UrlQRCode').text
+                url_consulta_chave_acesso = uf_tag.find(f'{tipo_ambiente}/UrlConsultaChaveAcesso').text
             return {
                 'STATUS': uf_tag.find(f'{tipo_ambiente}/StatusServico').text,
-                'QR': uf_tag.find(f'{tipo_ambiente}/UrlQRCode').text,
-                'URL': uf_tag.find(f'{tipo_ambiente}/UrlConsultaChaveAcesso').text,
+                'QR': qrcode_consulta,
+                'URL': url_consulta_chave_acesso,
                 'AUTORIZACAO': uf_tag.find(f'{tipo_ambiente}/Autorizacao').text,
                 'INUTILIZACAO': uf_tag.find(f'{tipo_ambiente}/Inutilizacao').text,
                 'EVENTOS': uf_tag.find(f'{tipo_ambiente}/RecepcaoEvento').text,

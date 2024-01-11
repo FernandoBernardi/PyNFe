@@ -390,7 +390,7 @@ class ComunicacaoSefaz(Comunicacao):
     def _get_url(self, modelo, consulta, contingencia=False):
         """ Retorna a url para comunicação com o webservice """
         servidor_uf = self.uf
-        if servidor_uf and modelo == 'nfe':
+        if contingencia and modelo == 'nfe':
             contingencia_svrs = ['AM', 'BA', 'CE', 'GO', 'MA', 'MS', 'MT', 'PE', 'PR']
             servidor_uf = 'SVCRS' if self.uf in contingencia_svrs else 'SVCAN'
         webservice_urls = obter_webservice(servidor_uf, self._ambiente, modelo)
