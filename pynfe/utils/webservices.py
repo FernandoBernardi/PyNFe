@@ -571,8 +571,8 @@ def obter_webservice(uf: str, tpamb: int, modelo: str) -> dict:
     Obtem as informações do webservice para o estado informado
     """
     uf = uf.upper()
-    modelo = modelo.lower()
     tpamb = int(tpamb)
+    modelo = modelo.lower()
     if tpamb == 1:
         tipo_ambiente = 'Producao'
     elif tpamb == 2:

@@ -41,7 +41,7 @@ class Comunicacao(object):
     commit = True  # True = Para fazer o post, False = Retornar url e xml montados
 
     def __init__(self, uf, certificado, certificado_senha, homologacao=False, commit=True):
-        self.uf = uf
+        self.uf = str(uf).upper()
         self.certificado = certificado
         self.certificado_senha = certificado_senha
         self._ambiente = 2 if homologacao else 1
@@ -389,7 +389,21 @@ class ComunicacaoSefaz(Comunicacao):
 
     def _get_url(self, modelo, consulta, contingencia=False):
         """ Retorna a url para comunicação com o webservice """
-        webservice_urls = obter_webservice(self.uf.upper(), self._ambiente, modelo)
+        if contingencia:
+            contingencia_svrs = ['AM', 'BA', 'CE', 'GO', 'MA', 'MS', 'MT', 'PE', 'PR']
+            servidor = 'SVRS' if self.uf in contingencia_svrs else 'SVAN'
+            if servidor == 'SVAN' and modelo == 'nfce':
+                servidor = 'SVRS'
+        else:
+            lista_svrs = ['AC', 'AL', 'AP', 'DF', 'ES', 'PB', 'PI', 'RJ', 'RN', 'RO', 'RR', 'SC', 'SE', 'TO', 'PA']
+            servidor = 'SVRS' if self.uf in lista_svrs else self.uf
+            # PE e BA são as únicas UF'sque possuem NFE proprio e SVRS para NFCe
+            if modelo == 'nfce' and self.uf not in ['PE', 'BA']:
+                servidor = 'SVRS'
+            # CE é a única UF que possuem NFE SVRS e NFCe próprio
+            if modelo == 'nfe' and self.uf == 'CE':
+                servidor = 'SVRS'
+        webservice_urls = obter_webservice(servidor, self._ambiente, modelo)
         self.url = webservice_urls[consulta]
         return self.url
 
