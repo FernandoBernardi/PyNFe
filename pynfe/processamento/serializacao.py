@@ -1095,6 +1095,11 @@ class SerializacaoXML(Serializacao):
                                 etree.SubElement(lacres, 'nLacre').text = lacre.numero_lacre
         # Duplicatas
         if nota_fiscal.modelo == 55 and nota_fiscal.duplicatas:
+            fat = etree.SubElement(raiz, 'fat')
+            etree.SubElement(fat, 'nFat').text = nota_fiscal.fatura_numero
+            etree.SubElement(fat, 'vOrig').text = '{:.2f}'.format(nota_fiscal.fatura_valor_original)
+            etree.SubElement(fat, 'vDesc').text = '{:.2f}'.format(nota_fiscal.fatura_valor_desconto)
+            etree.SubElement(fat, 'vLiq').text = '{:.2f}'.format(nota_fiscal.fatura_valor_liquido)
             cobr = etree.SubElement(raiz, 'cobr')
             for duplicata in nota_fiscal.duplicatas:
                 dup = etree.SubElement(cobr, 'dup')
