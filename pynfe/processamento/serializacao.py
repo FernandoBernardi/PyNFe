@@ -1098,7 +1098,7 @@ class SerializacaoXML(Serializacao):
             cobr = etree.SubElement(raiz, 'cobr')
             for duplicata in nota_fiscal.duplicatas:
                 dup = etree.SubElement(cobr, 'dup')
-                etree.SubElement(dup, 'indPag').text = str(duplicata.numero).zfill(3)
+                etree.SubElement(dup, 'nDup').text = str(duplicata.numero).zfill(3)
                 etree.SubElement(dup, 'dVenc').text = duplicata.data_vencimento.strftime('%Y-%m-%d')
                 etree.SubElement(dup, 'vDup').text = '{:.2f}'.format(duplicata.valor)
 
