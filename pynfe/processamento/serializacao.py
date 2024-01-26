@@ -1097,7 +1097,7 @@ class SerializacaoXML(Serializacao):
         if nota_fiscal.modelo == 55 and nota_fiscal.duplicatas:
             cobr = etree.SubElement(raiz, 'cobr')
             for duplicata in nota_fiscal.duplicatas:
-                etree.SubElement(cobr, 'indPag').text = str(duplicata.numero).zfill(2)
+                etree.SubElement(cobr, 'indPag').text = str(duplicata.numero).zfill(3)
                 etree.SubElement(cobr, 'dVenc').text = duplicata.data_vencimento.strftime('%Y-%m-%d')
                 etree.SubElement(cobr, 'vDup').text = '{:.2f}'.format(duplicata.valor)
 
