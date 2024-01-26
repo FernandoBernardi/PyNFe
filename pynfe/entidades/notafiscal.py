@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import datetime
 import random
 from decimal import Decimal
 
@@ -1033,7 +1034,7 @@ class NotaFiscalCobrancaDuplicata(Entidade):
     numero = str()
 
     #  - Data de vencimento
-    data_vencimento = None
+    data_vencimento: datetime.date = None
 
     #  - Valor
     valor = Decimal()
