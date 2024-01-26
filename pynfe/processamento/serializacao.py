@@ -1097,9 +1097,10 @@ class SerializacaoXML(Serializacao):
         if nota_fiscal.modelo == 55 and nota_fiscal.duplicatas:
             cobr = etree.SubElement(raiz, 'cobr')
             for duplicata in nota_fiscal.duplicatas:
-                etree.SubElement(cobr, 'indPag').text = str(duplicata.numero).zfill(3)
-                etree.SubElement(cobr, 'dVenc').text = duplicata.data_vencimento.strftime('%Y-%m-%d')
-                etree.SubElement(cobr, 'vDup').text = '{:.2f}'.format(duplicata.valor)
+                dup = etree.SubElement(cobr, 'dup')
+                etree.SubElement(dup, 'indPag').text = str(duplicata.numero).zfill(3)
+                etree.SubElement(dup, 'dVenc').text = duplicata.data_vencimento.strftime('%Y-%m-%d')
+                etree.SubElement(dup, 'vDup').text = '{:.2f}'.format(duplicata.valor)
 
         # Pagamento
         """ Obrigatório o preenchimento do Grupo Informações de Pagamento para NF-e e NFC-e.
