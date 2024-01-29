@@ -28,7 +28,7 @@ class Validacao(object):
         Retorno:
             caminho absoluto para o arquivo xsd
         """
-        return path.abspath(path.join(xsd_folder, xsd_file))
+        return path.join(xsd_folder, xsd_file)
 
     def validar_xml(self, xml_path, xsd_file, use_assert=False):
         '''Valida um arquivo xml.
@@ -55,7 +55,8 @@ class Validacao(object):
             xsd_schema = self.MEM_CACHE[xsd_file]
         except:
             # lê xsd e atualiza cache
-            xsd_doc = etree.parse(xsd_file)
+            xsf_file_path = self.get_xsd(xsd_file)
+            xsd_doc = etree.parse(xsf_file_path)
             xsd_schema = etree.XMLSchema(xsd_doc)
             self.MEM_CACHE[xsd_file] = xsd_schema
 

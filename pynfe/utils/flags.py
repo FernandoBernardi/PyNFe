@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+import os.path
+
+from pynfe.utils import CAMINHO_DATA
 
 NAMESPACE_NFE = 'http://www.portalfiscal.inf.br/nfe'
 NAMESPACE_SIG = 'http://www.w3.org/2000/09/xmldsig#'
@@ -29,7 +32,7 @@ TIPOS_DOCUMENTO = (
     'idEstrangeiro',
 )
 
-XSD_FOLDER_NFE = "pynfe/data/XSDs/NF-e"
+XSD_FOLDER_NFE = os.path.join(CAMINHO_DATA, "XSDs", "NF-e")
 XSD_NFE = "nfe_v4.00.xsd"
 XSD_NFE_PROCESSADA = "procNFe_v4.00.xsd"
 XSD_PD_CANCELAR_NFE = "procCancNFe_v1.07.xsd"
@@ -38,7 +41,6 @@ XSD_PD_INUTILIZAR_NFE = "procInutNFe_v1.07.xsd"
 XSD_FOLDER_MDFE = "pynfe/data/XSDs/MDF-e"
 XSD_MDFE = "mdfe_v3.00.xsd"
 XSD_MDFE_PROCESSADA = "procMDFe_v3.00.xsd"
-
 
 ICMS_TIPOS_TRIBUTACAO = (
     ('00', 'ICMS 00 - Tributada integralmente'),
@@ -58,7 +60,8 @@ ICMS_TIPOS_TRIBUTACAO = (
     ('202', 'ICMS 202 - Tributação ICMS pelo Simples Nacional, CSOSN=202 ou 203'),
     ('500', 'ICMS 500 - Tributação ICMS pelo Simples Nacional, CSOSN=500'),
     ('900', 'ICMS 900 - Tributação ICMS pelo Simples Nacional, CSOSN=900'),
-    ('ST', 'ICMS ST - Grupo de informação do ICMS ST devido para a UF de destino, nas operações interestaduais de produtos que tiveram retenção antecipada de ICMS por ST na UF do remetente. Repasse via Substituto Tributário.')
+    ('ST',
+     'ICMS ST - Grupo de informação do ICMS ST devido para a UF de destino, nas operações interestaduais de produtos que tiveram retenção antecipada de ICMS por ST na UF do remetente. Repasse via Substituto Tributário.')
 )
 
 ICMS_ORIGENS = (
@@ -66,7 +69,8 @@ ICMS_ORIGENS = (
     (1, 'Estrangeira - Importação direta, exceto a indicada no código 6.'),
     (2, 'Estrangeira - Adquirida no mercado interno, exceto a indicada no código 7.'),
     (3, 'Nacional, mercadoria ou bem com Conteúdo de Importação superior a 40% e inferior ou igual a 70%.'),
-    (4, 'Nacional, cuja produção tenha sido feita em conformidade com os processos produtivos básicos de que tratam as legislações citadas nos Ajustes.'),
+    (4,
+     'Nacional, cuja produção tenha sido feita em conformidade com os processos produtivos básicos de que tratam as legislações citadas nos Ajustes.'),
     (5, 'Nacional, mercadoria ou bem com Conteúdo de Importação inferior ou igual a 40%. '),
     (6, 'Estrangeira - Importação direta, sem similar nacional, constante em lista da CAMEX e gás natural. '),
     (7, 'Estrangeira - Adquirida no mercado interno, sem similar nacional, constante em lista da CAMEX e gás natural.'),
@@ -95,7 +99,8 @@ ICMS_MOTIVO_DESONERACAO = (
     (3, 'Produtor Agropecuário'),
     (4, 'Frotista/Locadora'),
     (5, 'Diplomático/Consular'),
-    (6, 'Utilitários e Motocicletas da Amazônia Ocidental e Áreas de Livre Comércio (Resolução 714/88 e 790/94 – CONTRAN e suas alterações)'),
+    (6,
+     'Utilitários e Motocicletas da Amazônia Ocidental e Áreas de Livre Comércio (Resolução 714/88 e 790/94 – CONTRAN e suas alterações)'),
     (7, 'SUFRAMA'),
     (8, 'Venda a órgão Público'),
     (9, 'Outros'),
@@ -207,7 +212,8 @@ IPI_TIPOS_CALCULO = (
 )
 
 PIS_TIPOS_TRIBUTACAO = (
-    ('01', 'PIS 01 - Operação Tributável - Base de cálculo = valor da operação alíquota normal (cumulativo/não cumulativo)'),
+    ('01',
+     'PIS 01 - Operação Tributável - Base de cálculo = valor da operação alíquota normal (cumulativo/não cumulativo)'),
     ('02', 'PIS 02 - Operação Tributável - Base de cálculo = valor da operação (alíquota diferenciada)'),
     ('03', 'PIS 03 - Operacao Tributavel - Base de cálculo = quantidade vendida x alíquota por unidade de produto)'),
     ('04', 'PIS 04 - Operacao Tributavel - Tributacao Monofasica - (Aliquota Zero)'),
@@ -217,19 +223,30 @@ PIS_TIPOS_TRIBUTACAO = (
     ('09', 'PIS 09 - Operacao com Suspensao da Contribuicao'),
     ('49', 'PIS 49 - Outras Operações de Saída'),
     ('50', 'PIS 50 - Operação com Direito a Crédito - Vinculada Exclusivamente a Receita Tributada no Mercado Interno'),
-    ('51', 'PIS 51 - Operação com Direito a Crédito - Vinculada Exclusivamente a Receita Não Tributada no Mercado Interno'),
+    ('51',
+     'PIS 51 - Operação com Direito a Crédito - Vinculada Exclusivamente a Receita Não Tributada no Mercado Interno'),
     ('52', 'PIS 52 - Operação com Direito a Crédito – Vinculada Exclusivamente a Receita de Exportação'),
-    ('53', 'PIS 53 - Operação com Direito a Crédito - Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno'),
-    ('54', 'PIS 54 - Operação com Direito a Crédito - Vinculada a Receitas Tributadas no Mercado Interno e de Exportação'),
-    ('55', 'PIS 55 - Operação com Direito a Crédito - Vinculada a Receitas Não Tributadas no Mercado Interno e de Exportação'),
-    ('56', 'PIS 56 - Operação com Direito a Crédito - Vinculada a Receitas Tributadas e Não Tributadas no Mercado Interno, e de Exportação'),
-    ('60', 'PIS 60 - Crédito Presumido - Operação de Aquisição Vinculada Exclusivamente a Receita Tributada no Mercado Interno'),
-    ('61', 'PIS 61 - Crédito Presumido - Operação de Aquisição Vinculada Exclusivamente a Receita Não Tributada no Mercado Interno'),
+    ('53',
+     'PIS 53 - Operação com Direito a Crédito - Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno'),
+    ('54',
+     'PIS 54 - Operação com Direito a Crédito - Vinculada a Receitas Tributadas no Mercado Interno e de Exportação'),
+    ('55',
+     'PIS 55 - Operação com Direito a Crédito - Vinculada a Receitas Não Tributadas no Mercado Interno e de Exportação'),
+    ('56',
+     'PIS 56 - Operação com Direito a Crédito - Vinculada a Receitas Tributadas e Não Tributadas no Mercado Interno, e de Exportação'),
+    ('60',
+     'PIS 60 - Crédito Presumido - Operação de Aquisição Vinculada Exclusivamente a Receita Tributada no Mercado Interno'),
+    ('61',
+     'PIS 61 - Crédito Presumido - Operação de Aquisição Vinculada Exclusivamente a Receita Não Tributada no Mercado Interno'),
     ('62', 'PIS 62 - Crédito Presumido - Operação de Aquisição Vinculada Exclusivamente a Receita de Exportação'),
-    ('63', 'PIS 63 - Crédito Presumido - Operação de Aquisição Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno'),
-    ('64', 'PIS 64 - Crédito Presumido - Operação de Aquisição Vinculada a Receitas Tributadas no Mercado Interno e de Exportação'),
-    ('65', 'PIS 65 - Crédito Presumido - Operação de Aquisição Vinculada a Receitas Não Tributadas no Mercado Interno e de Exportação'),
-    ('66', 'PIS 66 - Crédito Presumido - Operação de Aquisição Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno, e de Exportação'),
+    ('63',
+     'PIS 63 - Crédito Presumido - Operação de Aquisição Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno'),
+    ('64',
+     'PIS 64 - Crédito Presumido - Operação de Aquisição Vinculada a Receitas Tributadas no Mercado Interno e de Exportação'),
+    ('65',
+     'PIS 65 - Crédito Presumido - Operação de Aquisição Vinculada a Receitas Não Tributadas no Mercado Interno e de Exportação'),
+    ('66',
+     'PIS 66 - Crédito Presumido - Operação de Aquisição Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno, e de Exportação'),
     ('67', 'PIS 67 - Crédito Presumido - Outras Operações'),
     ('70', 'PIS 70 - Operação de Aquisição sem Direito a Crédito'),
     ('71', 'PIS 71 - Operação de Aquisição com Isenção'),
@@ -244,7 +261,8 @@ PIS_TIPOS_TRIBUTACAO = (
 PIS_TIPOS_CALCULO = IPI_TIPOS_CALCULO
 
 COFINS_TIPOS_TRIBUTACAO = (
-    ('01', 'COFINS 01 - Operação Tributável - Base de cálculo = valor da operação alíquota normal (cumulativo/não cumulativo)'),
+    ('01',
+     'COFINS 01 - Operação Tributável - Base de cálculo = valor da operação alíquota normal (cumulativo/não cumulativo)'),
     ('02', 'COFINS 02 - Operação Tributável - Base de cálculo = valor da operação (alíquota diferenciada)'),
     ('03', 'COFINS 03 - Operacao Tributavel - Base de cálculo = quantidade vendida x alíquota por unidade de produto)'),
     ('04', 'COFINS 04 - Operacao Tributavel - Tributacao Monofasica - (Aliquota Zero)'),
@@ -253,20 +271,32 @@ COFINS_TIPOS_TRIBUTACAO = (
     ('08', 'COFINS 08 - Operacao sem Indidencia da Contribuicao'),
     ('09', 'COFINS 09 - Operacao com Suspensao da Contribuicao'),
     ('49', 'COFINS 49 - Outras Operações de Saída'),
-    ('50', 'COFINS 50 - Operação com Direito a Crédito - Vinculada Exclusivamente a Receita Tributada no Mercado Interno'),
-    ('51', 'COFINS 51 - Operação com Direito a Crédito - Vinculada Exclusivamente a Receita Não Tributada no Mercado Interno'),
+    ('50',
+     'COFINS 50 - Operação com Direito a Crédito - Vinculada Exclusivamente a Receita Tributada no Mercado Interno'),
+    ('51',
+     'COFINS 51 - Operação com Direito a Crédito - Vinculada Exclusivamente a Receita Não Tributada no Mercado Interno'),
     ('52', 'COFINS 52 - Operação com Direito a Crédito – Vinculada Exclusivamente a Receita de Exportação'),
-    ('53', 'COFINS 53 - Operação com Direito a Crédito - Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno'),
-    ('54', 'COFINS 54 - Operação com Direito a Crédito - Vinculada a Receitas Tributadas no Mercado Interno e de Exportação'),
-    ('55', 'COFINS 55 - Operação com Direito a Crédito - Vinculada a Receitas Não Tributadas no Mercado Interno e de Exportação'),
-    ('56', 'COFINS 56 - Operação com Direito a Crédito - Vinculada a Receitas Tributadas e Não Tributadas no Mercado Interno, e de Exportação'),
-    ('60', 'COFINS 60 - Crédito Presumido - Operação de Aquisição Vinculada Exclusivamente a Receita Tributada no Mercado Interno'),
-    ('61', 'COFINS 61 - Crédito Presumido - Operação de Aquisição Vinculada Exclusivamente a Receita Não Tributada no Mercado Interno'),
+    ('53',
+     'COFINS 53 - Operação com Direito a Crédito - Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno'),
+    ('54',
+     'COFINS 54 - Operação com Direito a Crédito - Vinculada a Receitas Tributadas no Mercado Interno e de Exportação'),
+    ('55',
+     'COFINS 55 - Operação com Direito a Crédito - Vinculada a Receitas Não Tributadas no Mercado Interno e de Exportação'),
+    ('56',
+     'COFINS 56 - Operação com Direito a Crédito - Vinculada a Receitas Tributadas e Não Tributadas no Mercado Interno, e de Exportação'),
+    ('60',
+     'COFINS 60 - Crédito Presumido - Operação de Aquisição Vinculada Exclusivamente a Receita Tributada no Mercado Interno'),
+    ('61',
+     'COFINS 61 - Crédito Presumido - Operação de Aquisição Vinculada Exclusivamente a Receita Não Tributada no Mercado Interno'),
     ('62', 'COFINS 62 - Crédito Presumido - Operação de Aquisição Vinculada Exclusivamente a Receita de Exportação'),
-    ('63', 'COFINS 63 - Crédito Presumido - Operação de Aquisição Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno'),
-    ('64', 'COFINS 64 - Crédito Presumido - Operação de Aquisição Vinculada a Receitas Tributadas no Mercado Interno e de Exportação'),
-    ('65', 'COFINS 65 - Crédito Presumido - Operação de Aquisição Vinculada a Receitas Não Tributadas no Mercado Interno e de Exportação'),
-    ('66', 'COFINS 66 - Crédito Presumido - Operação de Aquisição Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno, e de Exportação'),
+    ('63',
+     'COFINS 63 - Crédito Presumido - Operação de Aquisição Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno'),
+    ('64',
+     'COFINS 64 - Crédito Presumido - Operação de Aquisição Vinculada a Receitas Tributadas no Mercado Interno e de Exportação'),
+    ('65',
+     'COFINS 65 - Crédito Presumido - Operação de Aquisição Vinculada a Receitas Não Tributadas no Mercado Interno e de Exportação'),
+    ('66',
+     'COFINS 66 - Crédito Presumido - Operação de Aquisição Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno, e de Exportação'),
     ('67', 'COFINS 67 - Crédito Presumido - Outras Operações'),
     ('70', 'COFINS 70 - Operação de Aquisição sem Direito a Crédito'),
     ('71', 'COFINS 71 - Operação de Aquisição com Isenção'),
