@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os.path
-
-from pynfe.utils import CAMINHO_DATA
+CAMINHO_DATA = os.path.join(os.path.dirname(
+    os.path.abspath(__file__)), '..', 'data')
 
 NAMESPACE_NFE = 'http://www.portalfiscal.inf.br/nfe'
 NAMESPACE_SIG = 'http://www.w3.org/2000/09/xmldsig#'

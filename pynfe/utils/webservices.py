@@ -2,11 +2,9 @@ import os
 
 from lxml import etree
 
-CAMINHO_DATA = os.path.join(os.path.dirname(
-    os.path.abspath(__file__)), '..', 'data')
-CAMINHO_WEBSERVICES = os.path.join(CAMINHO_DATA, 'Webservices')
+from pynfe.utils.flags import CAMINHO_DATA
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+CAMINHO_WEBSERVICES = os.path.join(CAMINHO_DATA, 'Webservices')
 
 NFCE = {
     'RO': {
