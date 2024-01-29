@@ -28,7 +28,7 @@ setuptools.setup(
     packages=setuptools.find_packages(
         exclude=['tests']),
     package_data={
-        'pynfe': ['data/XSDs/NF-e/**/*.xsd', 'data/**/*.xml'],
+        'pynfe': ['data/**/*.txt', 'data/**/*.xml', 'data/XSDs/NF-e/**/*.xsd'],
     },
     install_requires=[
         'pyopenssl',
