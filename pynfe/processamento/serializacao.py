@@ -904,12 +904,8 @@ class SerializacaoXML(Serializacao):
         etree.SubElement(ide, 'cDV').text = nota_fiscal.dv_codigo_numerico_aleatorio
         etree.SubElement(ide, 'tpAmb').text = str(self._ambiente)
         etree.SubElement(ide, 'finNFe').text = str(nota_fiscal.finalidade_emissao)
-        if nota_fiscal.modelo == 65:
-            etree.SubElement(ide, 'indFinal').text = str(1)
-            etree.SubElement(ide, 'indPres').text = str(1)
-        else:
-            etree.SubElement(ide, 'indFinal').text = str(nota_fiscal.cliente_final)
-            etree.SubElement(ide, 'indPres').text = str(nota_fiscal.indicador_presencial)
+        etree.SubElement(ide, 'indFinal').text = str(nota_fiscal.cliente_final)
+        etree.SubElement(ide, 'indPres').text = str(nota_fiscal.indicador_presencial)
         # Rejeição 435: NF-e não pode ter o indicativo do intermediador quando for modelo 55
         #               e informando o indicativo de presença (indPres) igual a 0, 1 ou 5.
         if (nota_fiscal.modelo in [55, 65]) and (nota_fiscal.indicador_presencial not in [0, 1, 5]):
