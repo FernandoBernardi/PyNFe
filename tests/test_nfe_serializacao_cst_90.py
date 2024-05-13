@@ -152,7 +152,7 @@ class SerializacaoNFeTestCase(unittest.TestCase):
         )
 
         self.notafiscal.adicionar_nota_fiscal_referenciada(
-            tipo='Nota Fiscal produtor',
+            tipo='nf-produtor-rural',
             chave_acesso='',
             uf='51',
             mes_ano_emissao='2205',
@@ -164,7 +164,7 @@ class SerializacaoNFeTestCase(unittest.TestCase):
         )
 
         self.notafiscal.adicionar_nota_fiscal_referenciada(
-            tipo='Nota Fiscal produtor',
+            tipo='nf-produtor-rural',
             chave_acesso='',
             uf='51',
             mes_ano_emissao='2205',

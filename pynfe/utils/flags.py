@@ -170,11 +170,11 @@ NF_FINALIDADES_EMISSAO = (
 )
 
 NF_REFERENCIADA_TIPOS = (
-    'Nota Fiscal eletronica',
-    'Nota Fiscal',
-    'Nota Fiscal produtor',
-    'Conhecimento de frete',
-    'Cupom Fiscal'
+    'nfe',
+    'nota-fiscal',
+    'nf-produtor-rural',
+    'conhecimento-frete',
+    'cupom-fiscal'
 )
 
 NF_PRODUTOS_ESPECIFICOS = (

@@ -919,11 +919,11 @@ class SerializacaoXML(Serializacao):
             if nota_fiscal.notas_fiscais_referenciadas:
                 for refNFe in nota_fiscal.notas_fiscais_referenciadas:
                     nfref = etree.SubElement(ide, 'NFref')
-                    if refNFe.tipo == 'Conhecimento de frete':
+                    if refNFe.tipo == 'conhecimento-frete':
                         if refNFe.chave_acesso and len(refNFe.chave_acesso) == 44:
                             etree.SubElement(nfref, 'refCTe').text = refNFe.chave_acesso
 
-                    elif refNFe.tipo == 'Nota Fiscal':
+                    elif refNFe.tipo == 'nota-fiscal':
                         refNF = etree.SubElement(nfref, 'refNF')
                         etree.SubElement(refNF, 'cUF').text = str(refNFe.uf)
                         etree.SubElement(refNF, 'AAMM').text = str(refNFe.mes_ano_emissao)
@@ -932,7 +932,7 @@ class SerializacaoXML(Serializacao):
                         etree.SubElement(refNF, 'serie').text = str(refNFe.serie)
                         etree.SubElement(refNF, 'nNF').text = str(refNFe.numero)
 
-                    elif refNFe.tipo == 'Nota Fiscal produtor':
+                    elif refNFe.tipo == 'nf-produtor-rural':
                         refNFP = etree.SubElement(nfref, 'refNFP')
                         etree.SubElement(refNFP, 'cUF').text = str(refNFe.uf)
                         etree.SubElement(refNFP, 'AAMM').text = str(refNFe.mes_ano_emissao)
@@ -941,12 +941,12 @@ class SerializacaoXML(Serializacao):
                         else:
                             etree.SubElement(refNFP, 'CNPJ').text = so_numeros(refNFe.cnpj)
                         etree.SubElement(refNFP, 'IE').text = so_numeros(refNFe.ie)
-                        etree.SubElement(refNFP, 'mod').text = '04'
+                        etree.SubElement(refNFP, 'mod').text = str(refNFe.modelo) # 01 ou 04
                         etree.SubElement(refNFP, 'serie').text = str(refNFe.serie)
                         etree.SubElement(refNFP, 'nNF').text = str(refNFe.numero)
 
                     else:
-                        # tipo == 'Nota Fiscal eletronica'
+                        # tipo == 'nfe'
                         if refNFe.chave_acesso and len(refNFe.chave_acesso) == 44:
                             etree.SubElement(nfref, 'refNFe').text = refNFe.chave_acesso
 
