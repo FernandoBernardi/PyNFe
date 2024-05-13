@@ -292,13 +292,14 @@ class ComunicacaoSefaz(Comunicacao):
             return self._post(url, xml)
         return url, xml
 
-    def status_servico(self, modelo):
+    def status_servico(self, modelo, contingencia=False):
         """
-        Verifica status do servidor da receita.
+        Verifica status do servidor sefaz.
         :param modelo: modelo é a string com tipo de serviço que deseja consultar, Ex: nfe ou nfce
+        :param contingencia: Indica se o envio é em contingência ou não
         :return:
         """
-        url = self._get_url(modelo, 'STATUS')
+        url = self._get_url(modelo, 'STATUS', contingencia)
         # Monta XML do corpo da requisição
         raiz = etree.Element('consStatServ', versao=VERSAO_PADRAO, xmlns=NAMESPACE_NFE)
         etree.SubElement(raiz, 'tpAmb').text = str(self._ambiente)
