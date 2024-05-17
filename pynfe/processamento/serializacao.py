@@ -1034,16 +1034,14 @@ class SerializacaoXML(Serializacao):
         # Transporte
         transp = etree.SubElement(raiz, 'transp')
         etree.SubElement(transp, 'modFrete').text = str(nota_fiscal.transporte_modalidade_frete)
-
+        # Transportadora
+        if nota_fiscal.transporte_transportadora:
+            transp.append(self._serializar_transportadora(
+                nota_fiscal.transporte_transportadora,
+                retorna_string=False,
+            ))
         # Apenas NF-e
         if nota_fiscal.modelo == 55:
-            # Transportadora
-            if nota_fiscal.transporte_transportadora:
-                transp.append(self._serializar_transportadora(
-                    nota_fiscal.transporte_transportadora,
-                    retorna_string=False,
-                ))
-
             # Veículo
             if nota_fiscal.transporte_veiculo_placa and nota_fiscal.transporte_veiculo_uf:
                 veiculo = etree.SubElement(transp, 'veicTransp')
