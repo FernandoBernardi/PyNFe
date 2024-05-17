@@ -946,8 +946,8 @@ class SerializacaoXML(Serializacao):
                             etree.SubElement(refNFP, 'CPF').text = so_numeros(refNFe.cnpj)
                         else:
                             etree.SubElement(refNFP, 'CNPJ').text = so_numeros(refNFe.cnpj)
-                        etree.SubElement(refNFP, 'IE').text = so_numeros(refNFe.ie)
-                        etree.SubElement(refNFP, 'mod').text = str(refNFe.modelo) # 01 ou 04
+                        etree.SubElement(refNFP, 'IE').text = refNFe.ie or 'ISENTO'
+                        etree.SubElement(refNFP, 'mod').text = str(refNFe.modelo)  # 01 ou 04
                         etree.SubElement(refNFP, 'serie').text = str(refNFe.serie)
                         etree.SubElement(refNFP, 'nNF').text = str(refNFe.numero)
 
