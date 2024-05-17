@@ -913,6 +913,12 @@ class SerializacaoXML(Serializacao):
         etree.SubElement(ide, 'procEmi').text = str(nota_fiscal.processo_emissao)
         etree.SubElement(ide, 'verProc').text = '%s %s' % (self._nome_aplicacao, nota_fiscal.versao_processo_emissao)
 
+        ### CONTINGENCIA ###
+        if self._contingencia != None:
+            etree.SubElement(ide, 'dhCont').text = nota_fiscal.data_emissao.strftime(
+                '%Y-%m-%dT%H:%M:%S') + tz  # Data e Hora da entrada em contingência AAAA-MM-DDThh:mm:ssTZD
+            etree.SubElement(ide, 'xJust').text = self._contingencia  # Justificativa da entrada em contingência (min 20, max 256 caracteres)
+
         ### NF-e referenciada (utilizado em casos de devolução/garantia) ###
         # Apenas NF-e
         if nota_fiscal.modelo == 55:
@@ -949,13 +955,6 @@ class SerializacaoXML(Serializacao):
                         # tipo == 'nfe'
                         if refNFe.chave_acesso and len(refNFe.chave_acesso) == 44:
                             etree.SubElement(nfref, 'refNFe').text = refNFe.chave_acesso
-
-        ### CONTINGENCIA ###
-        if self._contingencia != None:
-            etree.SubElement(ide, 'dhCont').text = nota_fiscal.data_emissao.strftime(
-                '%Y-%m-%dT%H:%M:%S') + tz  # Data e Hora da entrada em contingência AAAA-MM-DDThh:mm:ssTZD
-            etree.SubElement(ide,
-                             'xJust').text = self._contingencia  # Justificativa da entrada em contingência (min 20, max 256 caracteres)
 
         # Emitente
         raiz.append(self._serializar_emitente(nota_fiscal.emitente, retorna_string=False))
