@@ -264,13 +264,13 @@ class ComunicacaoSefaz(Comunicacao):
             return self._post(url, xml)
         return url, xml
 
-    def evento(self, modelo, evento, id_lote=1, contigencia=False):
+    def evento(self, modelo, evento, id_lote=1, contingencia=False):
         """
         Envia um evento de nota fiscal (cancelamento e carta de correção)
         :param modelo: Modelo da nota
         :param evento: Eventro
         :param id_lote: Id do lote
-        :param contigencia: True para requisição de contingeência
+        :param contingencia: True para requisição de contingeência
         :return:
         """
 
@@ -280,9 +280,9 @@ class ComunicacaoSefaz(Comunicacao):
             if evento[0][5].text.startswith('2'):
                 url = self._get_url_an(consulta='EVENTOS')
             else:
-                url = self._get_url(modelo=modelo, consulta='EVENTOS', contingencia=contigencia)
+                url = self._get_url(modelo=modelo, consulta='EVENTOS', contingencia=contingencia)
         except Exception:
-            url = self._get_url(modelo=modelo, consulta='EVENTOS', contingencia=contigencia)
+            url = self._get_url(modelo=modelo, consulta='EVENTOS', contingencia=contingencia)
 
         # Monta XML do corpo da requisição
         raiz = etree.Element('envEvento', versao='1.00', xmlns=NAMESPACE_NFE)
