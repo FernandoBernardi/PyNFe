@@ -270,7 +270,7 @@ class ComunicacaoSefaz(Comunicacao):
         :param modelo: Modelo da nota
         :param evento: Eventro
         :param id_lote: Id do lote
-        :param contingencia: True para requisição de contingeência
+        :param contingencia: True para requisição em contingência
         :return:
         """
 
@@ -311,7 +311,8 @@ class ComunicacaoSefaz(Comunicacao):
             return self._post(url, xml)
         return url, xml
 
-    def inutilizacao(self, modelo, cnpj, numero_inicial, numero_final, justificativa='', ano=None, serie='1'):
+    def inutilizacao(self, modelo, cnpj, numero_inicial, numero_final, justificativa='',
+                     ano=None, serie='1', contingencia=False):
         """
         Serviço destinado ao atendimento de solicitações de inutilização de numeração.
         :param modelo: Modelo da nota
@@ -321,11 +322,12 @@ class ComunicacaoSefaz(Comunicacao):
         :param justificativa: Justificativa
         :param ano: Ano
         :param serie:  Série
+        :param contingencia: True para requisição em contingência
         :return:
         """
 
         # url do servico
-        url = self._get_url(modelo=modelo, consulta='INUTILIZACAO')
+        url = self._get_url(modelo=modelo, consulta='INUTILIZACAO', contingencia=contingencia)
 
         # Valores default
         ano = str(ano or datetime.date.today().year)[-2:]
@@ -336,6 +338,8 @@ class ComunicacaoSefaz(Comunicacao):
             cnpjcpf_chaveacesso = cnpj
         elif len(cnpj) == 11:
             cnpjcpf_chaveacesso = str(cnpj).zfill(14)
+        else:
+            raise ValueError('CNPJ inválido')
 
         # Identificador da TAG a ser assinada formada com Código da UF + Ano (2 posições) +
         #  CNPJ + modelo + série + nro inicial e nro final precedida do literal “ID”
