@@ -450,8 +450,8 @@ class ComunicacaoSefaz(Comunicacao):
             result = requests.post(url, xml, headers=self._post_header(), cert=chave_cert, verify=False)
             result.encoding = 'utf-8'
             return result
-        except requests.exceptions.RequestException as e:
-            raise Exception('Falha ao comunicar com o servidor da Sefaz: %s' % e)
+        except requests.exceptions.RequestException:
+            raise Exception('Falha ao comunicar com o servidor da Sefaz, URL: %s' % url)
         finally:
             certificado_a1.excluir()
 
@@ -916,8 +916,8 @@ class ComunicacaoMDFe(Comunicacao):
             return result
         except requests.exceptions.Timeout:
             raise Exception('Timeout ao comicar com servidor da Sefaz')
-        except requests.exceptions.RequestException as e:
-            raise Exception('Falha ao comunicar com o servidor da Sefaz: %s' % e)
+        except requests.exceptions.RequestException:
+            raise Exception('Falha ao comunicar com o servidor da Sefaz, URL: %s' % url)
         finally:
             certificado_a1.excluir()
 
@@ -1134,7 +1134,7 @@ class ComunicacaoCTe(Comunicacao):
             return result
         except requests.exceptions.Timeout:
             raise Exception('Timeout ao comicar com servidor da Sefaz')
-        except requests.exceptions.RequestException as e:
-            raise Exception('Falha ao comunicar com o servidor da Sefaz: %s' % e)
+        except requests.exceptions.RequestException:
+            raise Exception('Falha ao comunicar com o servidor da Sefaz, URL: %s' % url)
         finally:
             certificado_a1.excluir()
